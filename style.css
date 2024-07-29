@@ -1,0 +1,63 @@
+body{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: "Montserrat Alternates", sans-serif;
+    font-weight: 500;
+    font-style:normal;
+    background-color: #8280EB;
+    color:#03023E;
+    justify-content: space-between;
+    height: 100vh;
+}
+header, footer{
+    font-size: 24px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    height: 70px;
+}
+header{
+    color: #8280EB;
+}
+footer{
+    background-color: #323258;
+}
+header{
+    background-color: #272599;
+}
+.сhessboard{
+    width: 70vh;
+    height: 70vh;
+    display: flex;
+    flex-wrap: wrap-reverse;
+    border: #272599 1px;
+}
+.сhessboard-square{
+    width: 12.5%;
+    height: 12.5%;
+}
+.black-square{
+    background-color: #03023E;
+}
+.white-square{
+    background-color: #BAB9EB;
+}
+.maincontent{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sidebar{
+    position: absolute;
+    width: 100px;
+    height: 200px;
+    background-color: green;
+    right: 10px;
+    top:10px; 
+}
+/* https://colorscheme.ru/#40122ssrrRpOc */

@@ -25,6 +25,13 @@ header{
 }
 footer{
     background-color: #323258;
+    display: flex;
+    font-size: 14px;
+    justify-content: space-around;
+    align-items: center;
+}
+footer *{
+    color: #8280EB;
 }
 header{
     background-color: #272599;

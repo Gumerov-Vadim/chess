@@ -134,10 +134,10 @@ function createFigure(litera,number){
                 return new Bishop(color);
                 break;
             case LITERAS[4]:
-                    return new King(color);
+                    return new Queen(color);
                     break;
             case LITERAS[5]:
-                    return new Queen(color);
+                    return new King(color);
                     break;
         }
     } else {

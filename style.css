@@ -43,6 +43,7 @@ header{
     flex-wrap: wrap;
     flex-direction: column-reverse;
     border: #272599 1px;
+    background-color: #8280EB;
 }
 .сhessboard-square{
     width: 12.5%;
@@ -54,11 +55,28 @@ header{
 .white-square{
     background-color: #BAB9EB;
 }
+
+@keyframes selectSquare {
+    /* 100%{background-color: #B0DBE7;}     */
+    100%{background-color: #B875E9;}    
+    /* 100%{opacity: 0.75;} */
+}
+.сhessboard-square:hover{
+    animation-name: selectSquare;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-in-out;
+    cursor: pointer;
+}
 .maincontent{
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+img{
+    -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none;
+    pointer-events: none;
 }
 .sidebar{
     position: absolute;

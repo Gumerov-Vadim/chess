@@ -12,6 +12,10 @@ body{
     justify-content: space-between;
     height: 100vh;
 }
+img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
 header, footer{
     font-size: 24px;
     width: 100%;
@@ -73,10 +77,6 @@ header{
     display: flex;
     align-items: center;
     justify-content: center;
-}
-img{
-    -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none;
-    pointer-events: none;
 }
 .sidebar{
     position: absolute;

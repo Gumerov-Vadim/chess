@@ -43,6 +43,9 @@ const COLORS = {
     WHITE: "white",
 }
 
+function Empty(){
+    this.name = FIGURES.EMPTY;
+}
 function Pawn(color){
     this.name = FIGURES.PAWN;
     this.color = color;
@@ -63,18 +66,8 @@ function Rook(color){
         this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_ROOK;
     }
 }
-function Bishop(color){
-    this.name = FIGURES.PAWN;
-    this.color = color;
-    
-    if(color === COLORS.BLACK){
-        this.image_src = FIGURES_IMAGES_SRC.BLACK.BLACK_BISHOP;
-    } else {
-        this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_BISHOP;
-    }
-}
 function Knight(color){
-    this.name = FIGURES.PAWN;
+    this.name = FIGURES.KNIGHT;
     this.color = color;
     
     if(color === COLORS.BLACK){
@@ -83,79 +76,93 @@ function Knight(color){
         this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_KNIGHT;
     }
 }
+function Bishop(color){
+    this.name = FIGURES.BISHOP;
+    this.color = color;
+    
+    if(color === COLORS.BLACK){
+        this.image_src = FIGURES_IMAGES_SRC.BLACK.BLACK_BISHOP;
+    } else {
+        this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_BISHOP;
+    }
+}
+function King(color){
+    this.name = FIGURES.KING;
+    this.color = color;
+    
+    if(color === COLORS.BLACK){
+        this.image_src = FIGURES_IMAGES_SRC.BLACK.BLACK_KING;
+    } else {
+        this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_KING;
+    }
+}
+function Queen(color){
+    this.name = FIGURES.QUEEN;
+    this.color = color;
+    
+    if(color === COLORS.BLACK){
+        this.image_src = FIGURES_IMAGES_SRC.BLACK.BLACK_QUEEN;
+    } else {
+        this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_QUEEN;
+    }
+}
+function createFigure(litera,number){
+    if(number === 2){
+        return new Pawn(COLORS.WHITE);
+    } else if(number===7){
+        return new Pawn(COLORS.BLACK);
+    } else if(number===1||number===8){
 
+        let color = "";
+        if(number===1){
+            color= COLORS.WHITE;
+        } else {
+            color= COLORS.BLACK;
+        }
+
+        switch(litera){
+            case LITERAS[1]:
+            case LITERAS[8]:
+                return new Rook(color);
+                break;
+            case LITERAS[2]:
+            case LITERAS[7]:
+                return new Knight(color);
+                break;
+            case LITERAS[3]:
+            case LITERAS[6]:
+                return new Bishop(color);
+                break;
+            case LITERAS[4]:
+                    return new King(color);
+                    break;
+            case LITERAS[4]:
+                    return new Queen(color);
+                    break;
+        }
+    } else {
+        return new Empty();
+    }
+}
 function ChessboardSquare(litera,number){
     this.litera = litera;
     this.number = number;
-    this.figure = {};
-    
-    switch(litera){
-        case "b":
-            this.figure = FIGURES.WHITE_PAWN;
-            break;
-        case "g":
-            this.figure = FIGURES.BLACK_PAWN;
-            break;
-        case "a":
-            switch(number){
-                case 1:
-                case 8:
-                    this.figure = FIGURES.WHITE_ROOK;
-                    break;
-                case 2:
-                case 7:
-                    this.figure = FIGURES.WHITE_KNIGHT;
-                    break;
-                case 3:
-                case 6:
-                    this.figure = FIGURES.WHITE_BISHOP;
-                    break;
-                case 4:
-                    this.figure = FIGURES.WHITE_KING;
-                    break;
-                case 5:
-                    this.figure = FIGURES.WHITE_QUEEN;
-                    break;
-            }
-            break;
-        case "g":
-            switch(number){
-                case 1:
-                case 8:
-                    this.figure = FIGURES.BLACK_ROOK;
-                    break;
-                case 2:
-                case 7:
-                    this.figure = FIGURES.BLACK_KNIGHT;
-                    break;
-                case 3:
-                case 6:
-                    this.figure = FIGURES.BLACK_BISHOP;
-                    break;
-                case 4:
-                    this.figure = FIGURES.BLACK_KING;
-                    break;
-                case 5:
-                    this.figure = FIGURES.BLACK_QUEEN;
-                    break;
-            }
-            break;
-    }
+    this.figure = createFigure(litera,number);
     //to do
 }
-const chessFieldModel= {
+const chessboardModel= {
 
 }
 
-let chessFieldHTML = "";
+let chessboardHTML = "";
 
 function createChessboard(){
     for(let i = 1; i <= 8; i++){
         for(let j = 1; j <= 8; j++){
-            chessFieldHTML = chessFieldHTML+`<div id="${LITERAS[i]}${j}" class="сhessboard-square ${LITERAS[i]} ${j} ${(i+j)%2===0?"black-square":"white-square"}">${i},${j}</div>`;
-            chessFieldModel[LITERAS[i]+''+j]= new ChessboardSquare(LITERAS[i],j);
+            chessboardHTML = chessboardHTML+`<div id="${LITERAS[i]}${j}" class="сhessboard-square ${LITERAS[i]} ${j} ${(i+j)%2===0?"black-square":"white-square"}">${i},${j}</div>`;
+            chessboardModel[LITERAS[i]+''+j]= new ChessboardSquare(LITERAS[i],j);
         }
     }
-    document.getElementsByClassName("сhessboard")[0].innerHTML = chessFieldHTML;
+    document.getElementsByClassName("сhessboard")[0].innerHTML = chessboardHTML;
 }
 createChessboard();

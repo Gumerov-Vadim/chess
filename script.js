@@ -136,7 +136,7 @@ function createFigure(litera,number){
             case LITERAS[4]:
                     return new King(color);
                     break;
-            case LITERAS[4]:
+            case LITERAS[5]:
                     return new Queen(color);
                     break;
         }
@@ -156,13 +156,25 @@ const chessboardModel= {
 
 let chessboardHTML = "";
 
-function createChessboard(){
+function chessboardRender(){
     for(let i = 1; i <= 8; i++){
         for(let j = 1; j <= 8; j++){
-            chessboardHTML = chessboardHTML+`<div id="${LITERAS[i]}${j}" class="сhessboard-square ${LITERAS[i]} ${j} ${(i+j)%2===0?"black-square":"white-square"}">${i},${j}</div>`;
-            chessboardModel[LITERAS[i]+''+j]= new ChessboardSquare(LITERAS[i],j);
+            let figureHTML = "";
+            let figure = chessboardModel[LITERAS[i]+''+j].figure;
+            if(figure.name!==FIGURES.EMPTY){
+                figureHTML = `<img src="${figure.image_src}" alt="${figure.name}" width="100%" height="100%" >`
+            }
+            chessboardHTML = chessboardHTML+`<div id="${LITERAS[i]}${j}" class="сhessboard-square ${LITERAS[i]} ${j} ${(i+j)%2===0?"black-square":"white-square"}">${figureHTML}</div>`;
         }
     }
     document.getElementsByClassName("сhessboard")[0].innerHTML = chessboardHTML;
 }
+function createChessboard(){
+    for(let i = 1; i <= 8; i++){
+        for(let j = 1; j <= 8; j++){
+            chessboardModel[LITERAS[i]+''+j]= new ChessboardSquare(LITERAS[i],j);
+        }
+    }
+}
 createChessboard();
+chessboardRender();

@@ -40,7 +40,8 @@ header{
     width: 70vh;
     height: 70vh;
     display: flex;
-    flex-wrap: wrap-reverse;
+    flex-wrap: wrap;
+    flex-direction: column-reverse;
     border: #272599 1px;
 }
 .сhessboard-square{

@@ -157,7 +157,6 @@ function Bishop(color){
         let squaresToMove = [];
         let squaresToCut = [];
 
-         
         const key = +Object.keys(LITERAS).find(k => LITERAS[k] === litera);
 
         let j = key;
@@ -220,6 +219,32 @@ function King(color){
         this.image_src = FIGURES_IMAGES_SRC.BLACK.BLACK_KING;
     } else {
         this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_KING;
+    }
+
+    
+    this.canMove = function(coordinate){
+
+        const litAndNum = coordinateToLitAndNum(coordinate);
+        const litera = litAndNum.litera;
+        const number = litAndNum.number;
+        let squaresToMove = [];
+        let squaresToCut = [];
+
+        const key = +Object.keys(LITERAS).find(k => LITERAS[k] === litera);
+
+        for(let i = number - 1; i <= number + 1; i++){
+            for(let j = key - 1; j <= key + 1; j++){
+                if(!chessboardModel[LITERAS[j]+''+i]) continue;
+                if(i===number&&j===key) continue;
+                if(chessboardModel[LITERAS[j]+''+i].figure.name===FIGURES.EMPTY){
+                    squaresToMove.push(LITERAS[j]+''+i);
+                } else {
+                    if(chessboardModel[LITERAS[j]+''+i].figure.color !== this.color) squaresToCut.push(LITERAS[j]+''+i);
+                }
+                }
+            }
+
+        return {squaresToMove,squaresToCut};
     }
 }
 function Queen(color){
@@ -333,7 +358,7 @@ function Queen(color){
 
 function createFigure(litera,number){
     if(number ===4&&litera==='d'){
-        return new Bishop(COLORS.WHITE);
+        return new King(COLORS.WHITE);
     }
     if(number === 2){
         return new Pawn(COLORS.WHITE);

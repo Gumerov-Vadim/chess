@@ -43,6 +43,17 @@ const COLORS = {
     WHITE: "white",
 }
 
+function coordinateToLitAndNum(coordinate){
+    const chars = coordinate.split('');
+    const litera = chars[0];
+    const number = +chars[1];
+    return {litera,number};
+}
+function LitAndNumToCoordinate(litera,number){
+    return litera+''+number;
+}
+
+
 function Empty(){
     this.name = FIGURES.EMPTY;
 }
@@ -70,25 +81,27 @@ function Rook(color){
         this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_ROOK;
     }
 
-    this.canMove = function(litera,number){
-
-        let squareCoordinatesToMove = [];
-        let squareCoordinatesToCut = [];
+    this.canMove = function(coordinate){
+        const litAndNum = coordinateToLitAndNum(coordinate);
+        const litera = litAndNum.litera;
+        const number = litAndNum.number;
+        let squaresToMove = [];
+        let squaresToCut = [];
 
         for(let i = number + 1; i <= 8; i++){
             if(chessboardModel[litera+''+i].figure.name===FIGURES.EMPTY){
-                squareCoordinatesToMove.push(litera+''+i);
+                squaresToMove.push(litera+''+i);
             } else {
-                if(chessboardModel[litera+''+i].figure.color !== this.color) squareCoordinatesToCut.push(litera+''+i); 
+                if(chessboardModel[litera+''+i].figure.color !== this.color) squaresToCut.push(litera+''+i); 
                 break;
             }
         }
 
         for(let i = number - 1; i >= 1; i--){
             if(chessboardModel[litera+''+i].figure.name===FIGURES.EMPTY){
-                squareCoordinatesToMove.push(litera+''+i);
+                squaresToMove.push(litera+''+i);
             } else {
-                if(chessboardModel[litera+''+i].figure.color !== this.color) squareCoordinatesToCut.push(litera+''+i);
+                if(chessboardModel[litera+''+i].figure.color !== this.color) squaresToCut.push(litera+''+i);
                 break;
             }
         }
@@ -97,23 +110,23 @@ function Rook(color){
 
         for(let i = key + 1; i <= 8; i++){
             if(chessboardModel[LITERAS[i]+''+number].figure.name===FIGURES.EMPTY){
-                squareCoordinatesToMove.push(LITERAS[i]+''+number);
+                squaresToMove.push(LITERAS[i]+''+number);
             } else {
-                if(chessboardModel[litera+''+i].figure.color !== this.color) squareCoordinatesToCut.push(litera+''+i);
+                if(chessboardModel[litera+''+i].figure.color !== this.color) squaresToCut.push(litera+''+i);
                 break;
             }
         }
 
         for(let i = key - 1; i >= 1; i--){
             if(chessboardModel[LITERAS[i]+''+number].figure.name===FIGURES.EMPTY){
-                squareCoordinatesToMove.push(LITERAS[i]+''+number);
+                squaresToMove.push(LITERAS[i]+''+number);
             } else {
-                if(chessboardModel[litera+''+i].figure.color !== this.color) squareCoordinatesToCut.push(litera+''+i);
+                if(chessboardModel[litera+''+i].figure.color !== this.color) squaresToCut.push(litera+''+i);
                 break;
             }
         }
 
-        return {squareCoordinatesToMove,squareCoordinatesToCut};
+        return {squaresToMove,squaresToCut};
     }
 }
 function Knight(color){
@@ -211,11 +224,31 @@ const chessboardModel= {
 
 let chessboardHTML = "";
 
-//можно выделить только квадрат с фигурой
-let selectedSquare = "";
-//squarestoMove
-//squaresToCut
-//currentTurn
+const chessboardGameInfo = {
+    selectedSquare: "",
+    squarestoMove: [],
+    squaresToCut: [],
+    currentTurn:COLORS.WHITE,
+    switchTurn: function(){
+        this.currentTurn = this.currentTurn===COLORS.WHITE?COLORS.BLACK:COLORS.WHITE;
+    },
+    moveFigure: function(litera,number){
+
+        if(!this.selectedSquare) return;
+        
+        const squareCoordinate = litera+''+number;
+        
+        if(!(this.squaresToCut.includes(squareCoordinate)||this.squaresToCut.includes(squareCoordinate))) return;
+
+        chessboardModel[litera+''+number].figure = chessboardModel[this.selectedSquare].figure;
+        chessboardModel[this.selectedSquare].figure = new Empty();
+    },
+    selectSquare: function(squareCoordinate,squarestoMove,squaresToCut){
+        this.selectedSquare = squareCoordinate;
+        this.squarestoMove = squarestoMove;
+        this.squaresToCut = squaresToCut;
+    }
+}
 
 function chessboardRender(){
     for(let i = 1; i <= 8; i++){
@@ -237,6 +270,9 @@ function chessboardRender(){
     squares.forEach(square => {
         square.onclick = function() {
             console.log(this.id);
+            const canMoveSquares = chessboardModel[this.id].figure.canMove(this.id);
+            console.log(canMoveSquares);
+            chessboardGameInfo.selectSquare(this.id,canMoveSquares.squaresToMove,canMoveSquares.squaresToCut);
         };
     });
     //getElementByClassName( toMove/toCut ).addEventListener (click, foo);
@@ -252,8 +288,4 @@ createChessboard();
 chessboardRender();
 
 
-let currentTurn = COLORS.WHITE;
-function switchTurn(){
-    currentTurn = currentTurn===COLORS.WHITE?COLORS.BLACK:COLORS.WHITE;
-}
 

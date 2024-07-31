@@ -137,7 +137,38 @@ function Knight(color){
     } else {
         this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_KNIGHT;
     }
-    
+    this.canMove = function(coordinate){
+        
+        const litAndNum = coordinateToLitAndNum(coordinate);
+        const litera = litAndNum.litera;
+        const number = litAndNum.number;
+        let squaresToMove = [];
+        let squaresToCut = [];
+
+        const key = +Object.keys(LITERAS).find(k => LITERAS[k] === litera);
+
+        const d_knightMoves = {
+            1:{litera:-2,number:1},
+            2:{litera:2,number:1},
+            3:{litera:1,number:-2},
+            4:{litera:1,number:2},
+            5:{litera:-2,number:-1},
+            6:{litera:2,number:-1},
+            7:{litera:-1,number:-2},
+            8:{litera:-1,number:2},
+        }
+
+        for(let i = 1; i <= 8; i++){
+                let squareToMoveKnight = LITERAS[d_knightMoves[i].litera+key]+''+(d_knightMoves[i].number+number);
+                if(!chessboardModel[squareToMoveKnight]) continue;
+                if(chessboardModel[squareToMoveKnight].figure.name===FIGURES.EMPTY){
+                    squaresToMove.push(squareToMoveKnight);
+                } else {
+                    if(chessboardModel[squareToMoveKnight].figure.color !== this.color) squaresToCut.push(squareToMoveKnight);
+                }
+            }
+        return {squaresToMove,squaresToCut};
+    }
 }
 function Bishop(color){
     this.name = FIGURES.BISHOP;
@@ -358,7 +389,7 @@ function Queen(color){
 
 function createFigure(litera,number){
     if(number ===4&&litera==='d'){
-        return new King(COLORS.WHITE);
+        return new Knight(COLORS.WHITE);
     }
     if(number === 2){
         return new Pawn(COLORS.WHITE);

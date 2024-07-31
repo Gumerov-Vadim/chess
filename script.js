@@ -53,7 +53,6 @@ function LitAndNumToCoordinate(litera,number){
     return litera+''+number;
 }
 
-
 function Empty(){
     this.name = FIGURES.EMPTY;
 }
@@ -149,6 +148,69 @@ function Bishop(color){
     } else {
         this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_BISHOP;
     }
+    
+    this.canMove = function(coordinate){
+
+        const litAndNum = coordinateToLitAndNum(coordinate);
+        const litera = litAndNum.litera;
+        const number = litAndNum.number;
+        let squaresToMove = [];
+        let squaresToCut = [];
+
+         
+        const key = +Object.keys(LITERAS).find(k => LITERAS[k] === litera);
+
+        let j = key;
+        for(let i = number + 1; i <= 8; i++){
+            j++;
+            if(!(j<=8)) break;
+                if(chessboardModel[LITERAS[j]+''+i].figure.name===FIGURES.EMPTY){
+                    squaresToMove.push(LITERAS[j]+''+i);
+                } else {
+                    if(chessboardModel[LITERAS[j]+''+i].figure.color !== this.color) squaresToCut.push(LITERAS[j]+''+i);
+                    break;
+                }
+            }
+
+        j = key;
+        for(let i = number - 1; i >= 1; i--){
+            j--;
+            if(!(j>=1)) break;
+                if(chessboardModel[LITERAS[j]+''+i].figure.name===FIGURES.EMPTY){
+                    squaresToMove.push(LITERAS[j]+''+i);
+                } else {
+                    if(chessboardModel[LITERAS[j]+''+i].figure.color !== this.color) squaresToCut.push(LITERAS[j]+''+i);
+                    break;
+                }
+        }
+
+       
+        j = key;
+        for(let i = number + 1; i <= 8; i++){
+            j--;
+            if(!(j>=1)) break;
+                if(chessboardModel[LITERAS[j]+''+i].figure.name===FIGURES.EMPTY){
+                    squaresToMove.push(LITERAS[j]+''+i);
+                } else {
+                    if(chessboardModel[LITERAS[j]+''+i].figure.color !== this.color) squaresToCut.push(LITERAS[j]+''+i);
+                    break;
+                }
+            }
+
+        j = key;
+        for(let i = number - 1; i >= 1; i--){
+            j++;
+            if(!(j<=8)) break;
+                if(chessboardModel[LITERAS[j]+''+i].figure.name===FIGURES.EMPTY){
+                    squaresToMove.push(LITERAS[j]+''+i);
+                } else {
+                    if(chessboardModel[LITERAS[j]+''+i].figure.color !== this.color) squaresToCut.push(LITERAS[j]+''+i);
+                    break;
+                }
+        }
+
+        return {squaresToMove,squaresToCut};
+    }
 }
 function King(color){
     this.name = FIGURES.KING;
@@ -216,8 +278,6 @@ function Queen(color){
             }
         }
         
-        //asdasdas
-
         let j = key;
         for(let i = number + 1; i <= 8; i++){
             j++;
@@ -273,7 +333,7 @@ function Queen(color){
 
 function createFigure(litera,number){
     if(number ===4&&litera==='d'){
-        return new Queen(COLORS.WHITE);
+        return new Bishop(COLORS.WHITE);
     }
     if(number === 2){
         return new Pawn(COLORS.WHITE);

@@ -222,35 +222,50 @@ const chessboardModel= {
 
 }
 
-let chessboardHTML = "";
-
 const chessboardGameInfo = {
     selectedSquare: "",
-    squarestoMove: [],
+    squaresToMove: [],
     squaresToCut: [],
     currentTurn:COLORS.WHITE,
+
     switchTurn: function(){
         this.currentTurn = this.currentTurn===COLORS.WHITE?COLORS.BLACK:COLORS.WHITE;
     },
-    moveFigure: function(litera,number){
+
+    moveFigure: function(squareCoordinate){
+        const litAndNum = coordinateToLitAndNum(squareCoordinate);
 
         if(!this.selectedSquare) return;
         
-        const squareCoordinate = litera+''+number;
-        
-        if(!(this.squaresToCut.includes(squareCoordinate)||this.squaresToCut.includes(squareCoordinate))) return;
+        if(!(this.squaresToCut.includes(squareCoordinate)||this.squaresToMove.includes(squareCoordinate))) return;
 
-        chessboardModel[litera+''+number].figure = chessboardModel[this.selectedSquare].figure;
+        chessboardModel[squareCoordinate].figure = chessboardModel[this.selectedSquare].figure;
         chessboardModel[this.selectedSquare].figure = new Empty();
+        chessboardRender();
+        this.selectedSquare = "";
+        this.squaresToMove = [];
+        this.squaresToCut = [];
     },
-    selectSquare: function(squareCoordinate,squarestoMove,squaresToCut){
+
+    selectSquare: function(squareCoordinate,squaresToMove,squaresToCut){
         this.selectedSquare = squareCoordinate;
-        this.squarestoMove = squarestoMove;
+        this.squaresToMove = squaresToMove;
         this.squaresToCut = squaresToCut;
+    },
+
+    clickHandler: function(squareCoordinate){
+        if(!this.selectedSquare){
+            const canMoveSquares = chessboardModel[squareCoordinate].figure.canMove(squareCoordinate);
+            chessboardGameInfo.selectSquare(squareCoordinate,canMoveSquares.squaresToMove,canMoveSquares.squaresToCut);
+        } else {
+            this.moveFigure(squareCoordinate);
+        }
     }
 }
 
+let chessboardHTML = "";
 function chessboardRender(){
+    chessboardHTML = "";
     for(let i = 1; i <= 8; i++){
         for(let j = 1; j <= 8; j++){
             let figureHTML = "";
@@ -269,10 +284,7 @@ function chessboardRender(){
     
     squares.forEach(square => {
         square.onclick = function() {
-            console.log(this.id);
-            const canMoveSquares = chessboardModel[this.id].figure.canMove(this.id);
-            console.log(canMoveSquares);
-            chessboardGameInfo.selectSquare(this.id,canMoveSquares.squaresToMove,canMoveSquares.squaresToCut);
+            chessboardGameInfo.clickHandler(this.id);
         };
     });
     //getElementByClassName( toMove/toCut ).addEventListener (click, foo);

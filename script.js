@@ -112,7 +112,7 @@ function Rook(color){
             if(chessboardModel[LITERAS[i]+''+number].figure.name===FIGURES.EMPTY){
                 squaresToMove.push(LITERAS[i]+''+number);
             } else {
-                if(chessboardModel[litera+''+i].figure.color !== this.color) squaresToCut.push(litera+''+i);
+                if(chessboardModel[LITERAS[i]+''+number].figure.color !== this.color) squaresToCut.push(LITERAS[i]+''+number);
                 break;
             }
         }
@@ -121,7 +121,7 @@ function Rook(color){
             if(chessboardModel[LITERAS[i]+''+number].figure.name===FIGURES.EMPTY){
                 squaresToMove.push(LITERAS[i]+''+number);
             } else {
-                if(chessboardModel[litera+''+i].figure.color !== this.color) squaresToCut.push(litera+''+i);
+                if(chessboardModel[LITERAS[i]+''+number].figure.color !== this.color) squaresToCut.push(LITERAS[i]+''+number);
                 break;
             }
         }
@@ -138,6 +138,7 @@ function Knight(color){
     } else {
         this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_KNIGHT;
     }
+    
 }
 function Bishop(color){
     this.name = FIGURES.BISHOP;
@@ -168,11 +169,111 @@ function Queen(color){
     } else {
         this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_QUEEN;
     }
+
+    
+    this.canMove = function(coordinate){
+        const litAndNum = coordinateToLitAndNum(coordinate);
+        const litera = litAndNum.litera;
+        const number = litAndNum.number;
+        let squaresToMove = [];
+        let squaresToCut = [];
+
+        for(let i = number + 1; i <= 8; i++){
+            if(chessboardModel[litera+''+i].figure.name===FIGURES.EMPTY){
+                squaresToMove.push(litera+''+i);
+            } else {
+                if(chessboardModel[litera+''+i].figure.color !== this.color) squaresToCut.push(litera+''+i); 
+                break;
+            }
+        }
+
+        for(let i = number - 1; i >= 1; i--){
+            if(chessboardModel[litera+''+i].figure.name===FIGURES.EMPTY){
+                squaresToMove.push(litera+''+i);
+            } else {
+                if(chessboardModel[litera+''+i].figure.color !== this.color) squaresToCut.push(litera+''+i);
+                break;
+            }
+        }
+
+        const key = +Object.keys(LITERAS).find(k => LITERAS[k] === litera);
+
+        for(let i = key + 1; i <= 8; i++){
+            if(chessboardModel[LITERAS[i]+''+number].figure.name===FIGURES.EMPTY){
+                squaresToMove.push(LITERAS[i]+''+number);
+            } else {
+                if(chessboardModel[LITERAS[i]+''+number].figure.color !== this.color) squaresToCut.push(LITERAS[i]+''+number);
+                break;
+            }
+        }
+
+        for(let i = key - 1; i >= 1; i--){
+            if(chessboardModel[LITERAS[i]+''+number].figure.name===FIGURES.EMPTY){
+                squaresToMove.push(LITERAS[i]+''+number);
+            } else {
+                if(chessboardModel[LITERAS[i]+''+number].figure.color !== this.color) squaresToCut.push(LITERAS[i]+''+number);
+                break;
+            }
+        }
+        
+        //asdasdas
+
+        let j = key;
+        for(let i = number + 1; i <= 8; i++){
+            j++;
+            if(!(j<=8)) break;
+                if(chessboardModel[LITERAS[j]+''+i].figure.name===FIGURES.EMPTY){
+                    squaresToMove.push(LITERAS[j]+''+i);
+                } else {
+                    if(chessboardModel[LITERAS[j]+''+i].figure.color !== this.color) squaresToCut.push(LITERAS[j]+''+i);
+                    break;
+                }
+            }
+
+        j = key;
+        for(let i = number - 1; i >= 1; i--){
+            j--;
+            if(!(j>=1)) break;
+                if(chessboardModel[LITERAS[j]+''+i].figure.name===FIGURES.EMPTY){
+                    squaresToMove.push(LITERAS[j]+''+i);
+                } else {
+                    if(chessboardModel[LITERAS[j]+''+i].figure.color !== this.color) squaresToCut.push(LITERAS[j]+''+i);
+                    break;
+                }
+        }
+
+       
+        j = key;
+        for(let i = number + 1; i <= 8; i++){
+            j--;
+            if(!(j>=1)) break;
+                if(chessboardModel[LITERAS[j]+''+i].figure.name===FIGURES.EMPTY){
+                    squaresToMove.push(LITERAS[j]+''+i);
+                } else {
+                    if(chessboardModel[LITERAS[j]+''+i].figure.color !== this.color) squaresToCut.push(LITERAS[j]+''+i);
+                    break;
+                }
+            }
+
+        j = key;
+        for(let i = number - 1; i >= 1; i--){
+            j++;
+            if(!(j<=8)) break;
+                if(chessboardModel[LITERAS[j]+''+i].figure.name===FIGURES.EMPTY){
+                    squaresToMove.push(LITERAS[j]+''+i);
+                } else {
+                    if(chessboardModel[LITERAS[j]+''+i].figure.color !== this.color) squaresToCut.push(LITERAS[j]+''+i);
+                    break;
+                }
+        }
+
+        return {squaresToMove,squaresToCut};
+    }
 }
 
 function createFigure(litera,number){
     if(number ===4&&litera==='d'){
-        return new Rook(COLORS.WHITE);
+        return new Queen(COLORS.WHITE);
     }
     if(number === 2){
         return new Pawn(COLORS.WHITE);
@@ -232,19 +333,26 @@ const chessboardGameInfo = {
         this.currentTurn = this.currentTurn===COLORS.WHITE?COLORS.BLACK:COLORS.WHITE;
     },
 
+    deselectSquare:function(){
+        this.selectedSquare = "";
+        this.squaresToMove = [];
+        this.squaresToCut = [];
+    },
+
     moveFigure: function(squareCoordinate){
         const litAndNum = coordinateToLitAndNum(squareCoordinate);
 
         if(!this.selectedSquare) return;
         
-        if(!(this.squaresToCut.includes(squareCoordinate)||this.squaresToMove.includes(squareCoordinate))) return;
+        if(!(this.squaresToCut.includes(squareCoordinate)||this.squaresToMove.includes(squareCoordinate))) {
+            this.deselectSquare();
+            return;
+        };
 
         chessboardModel[squareCoordinate].figure = chessboardModel[this.selectedSquare].figure;
         chessboardModel[this.selectedSquare].figure = new Empty();
         chessboardRender();
-        this.selectedSquare = "";
-        this.squaresToMove = [];
-        this.squaresToCut = [];
+        this.deselectSquare();
     },
 
     selectSquare: function(squareCoordinate,squaresToMove,squaresToCut){
@@ -255,6 +363,8 @@ const chessboardGameInfo = {
 
     clickHandler: function(squareCoordinate){
         if(!this.selectedSquare){
+            if(chessboardModel[squareCoordinate].figure.name === FIGURES.EMPTY){return;}
+
             const canMoveSquares = chessboardModel[squareCoordinate].figure.canMove(squareCoordinate);
             chessboardGameInfo.selectSquare(squareCoordinate,canMoveSquares.squaresToMove,canMoveSquares.squaresToCut);
         } else {

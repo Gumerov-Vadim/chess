@@ -55,6 +55,10 @@ function Pawn(color){
     } else {
         this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_PAWN;
     }
+    this.cutDown = function(litera,number){
+        
+        // chessboardModel[litera+''+number]
+    }
 }
 function Rook(color){
     this.name = FIGURES.ROOK;
@@ -64,6 +68,52 @@ function Rook(color){
         this.image_src = FIGURES_IMAGES_SRC.BLACK.BLACK_ROOK;
     } else {
         this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_ROOK;
+    }
+
+    this.canMove = function(litera,number){
+
+        let squareCoordinatesToMove = [];
+        let squareCoordinatesToCut = [];
+
+        for(let i = number + 1; i <= 8; i++){
+            if(chessboardModel[litera+''+i].figure.name===FIGURES.EMPTY){
+                squareCoordinatesToMove.push(litera+''+i);
+            } else {
+                if(chessboardModel[litera+''+i].figure.color !== this.color) squareCoordinatesToCut.push(litera+''+i); 
+                break;
+            }
+        }
+
+        for(let i = number - 1; i >= 1; i--){
+            if(chessboardModel[litera+''+i].figure.name===FIGURES.EMPTY){
+                squareCoordinatesToMove.push(litera+''+i);
+            } else {
+                if(chessboardModel[litera+''+i].figure.color !== this.color) squareCoordinatesToCut.push(litera+''+i);
+                break;
+            }
+        }
+
+        const key = +Object.keys(LITERAS).find(k => LITERAS[k] === litera);
+
+        for(let i = key + 1; i <= 8; i++){
+            if(chessboardModel[LITERAS[i]+''+number].figure.name===FIGURES.EMPTY){
+                squareCoordinatesToMove.push(LITERAS[i]+''+number);
+            } else {
+                if(chessboardModel[litera+''+i].figure.color !== this.color) squareCoordinatesToCut.push(litera+''+i);
+                break;
+            }
+        }
+
+        for(let i = key - 1; i >= 1; i--){
+            if(chessboardModel[LITERAS[i]+''+number].figure.name===FIGURES.EMPTY){
+                squareCoordinatesToMove.push(LITERAS[i]+''+number);
+            } else {
+                if(chessboardModel[litera+''+i].figure.color !== this.color) squareCoordinatesToCut.push(litera+''+i);
+                break;
+            }
+        }
+
+        return {squareCoordinatesToMove,squareCoordinatesToCut};
     }
 }
 function Knight(color){
@@ -106,7 +156,11 @@ function Queen(color){
         this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_QUEEN;
     }
 }
+
 function createFigure(litera,number){
+    if(number ===4&&litera==='d'){
+        return new Rook(COLORS.WHITE);
+    }
     if(number === 2){
         return new Pawn(COLORS.WHITE);
     } else if(number===7){
@@ -144,6 +198,7 @@ function createFigure(litera,number){
         return new Empty();
     }
 }
+
 function ChessboardSquare(litera,number){
     this.litera = litera;
     this.number = number;
@@ -156,18 +211,35 @@ const chessboardModel= {
 
 let chessboardHTML = "";
 
+//можно выделить только квадрат с фигурой
+let selectedSquare = "";
+//squarestoMove
+//squaresToCut
+//currentTurn
+
 function chessboardRender(){
     for(let i = 1; i <= 8; i++){
         for(let j = 1; j <= 8; j++){
             let figureHTML = "";
             let figure = chessboardModel[LITERAS[i]+''+j].figure;
             if(figure.name!==FIGURES.EMPTY){
-                figureHTML = `<img src="${figure.image_src}" alt="${figure.name}" width="100%" height="100%" >`
+                figureHTML = `<img draggable="false" src="${figure.image_src}" alt="${figure.name}" width="100%" height="100%" >`
             }
-            chessboardHTML = chessboardHTML+`<div id="${LITERAS[i]}${j}" class="сhessboard-square ${LITERAS[i]} ${j} ${(i+j)%2===0?"black-square":"white-square"}">${figureHTML}</div>`;
+
+            //добавить класс toMove/toCut
+            chessboardHTML = chessboardHTML+`<div id="${LITERAS[i]}${j}" class="сhessboard-square ${LITERAS[i]} row${j} ${(i+j)%2===0?"black-square":"white-square"}">${figureHTML}</div>`;
         }
     }
     document.getElementsByClassName("сhessboard")[0].innerHTML = chessboardHTML;
+    
+    const squares = document.querySelectorAll('.сhessboard-square');
+    
+    squares.forEach(square => {
+        square.onclick = function() {
+            console.log(this.id);
+        };
+    });
+    //getElementByClassName( toMove/toCut ).addEventListener (click, foo);
 }
 function createChessboard(){
     for(let i = 1; i <= 8; i++){
@@ -178,3 +250,10 @@ function createChessboard(){
 }
 createChessboard();
 chessboardRender();
+
+
+let currentTurn = COLORS.WHITE;
+function switchTurn(){
+    currentTurn = currentTurn===COLORS.WHITE?COLORS.BLACK:COLORS.WHITE;
+}
+

@@ -59,15 +59,48 @@ function Empty(){
 function Pawn(color){
     this.name = FIGURES.PAWN;
     this.color = color;
-    
+    this.isFirstMove = true;
     if(color === COLORS.BLACK){
         this.image_src = FIGURES_IMAGES_SRC.BLACK.BLACK_PAWN;
     } else {
         this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_PAWN;
     }
-    this.cutDown = function(litera,number){
+    
+    this.canMove = function(coordinate){
         
-        // chessboardModel[litera+''+number]
+        const litAndNum = coordinateToLitAndNum(coordinate);
+        const litera = litAndNum.litera;
+        const number = litAndNum.number;
+        let squaresToMove = [];
+        let squaresToCut = [];
+
+        const key = +Object.keys(LITERAS).find(k => LITERAS[k] === litera);
+
+        const d = chessboardModel[LITERAS[key]+''+number].figure.color === COLORS.WHITE?1:-1;
+
+                if(chessboardModel[LITERAS[key]+''+(number+d)]){
+                    if(chessboardModel[LITERAS[key]+''+(number+d)].figure.name===FIGURES.EMPTY){
+                        squaresToMove.push(LITERAS[key]+''+(number+d));
+                    }
+                }
+                
+                if(this.isFirstMove){
+                    if(chessboardModel[LITERAS[key]+''+(number+2*d)]){
+                        if(chessboardModel[LITERAS[key]+''+(number+2*d)].figure.name===FIGURES.EMPTY){
+                            squaresToMove.push(LITERAS[key]+''+(number+2*d));
+                        }
+                    }
+                }
+        
+            if(chessboardModel[LITERAS[key+1]+''+(number+d)]?.figure) {
+                if(chessboardModel[LITERAS[key+1]+''+(number+d)].figure.color !== this.color) squaresToCut.push(LITERAS[key+1]+''+(number+d))
+            }
+            
+            if(chessboardModel[LITERAS[key-1]+''+(number+d)]?.figure) {
+                if(chessboardModel[LITERAS[key-1]+''+(number+d)].figure.color !== this.color) squaresToCut.push(LITERAS[key-1]+''+(number+d))
+            }
+
+        return {squaresToMove,squaresToCut};
     }
 }
 function Rook(color){
@@ -388,9 +421,9 @@ function Queen(color){
 }
 
 function createFigure(litera,number){
-    if(number ===4&&litera==='d'){
-        return new Knight(COLORS.WHITE);
-    }
+    // if(number ===4&&litera==='d'){
+    //     return new Knight(COLORS.WHITE);
+    // }
     if(number === 2){
         return new Pawn(COLORS.WHITE);
     } else if(number===7){
@@ -466,6 +499,9 @@ const chessboardGameInfo = {
         };
 
         chessboardModel[squareCoordinate].figure = chessboardModel[this.selectedSquare].figure;
+
+        if(chessboardModel[squareCoordinate].figure.isFirstMove){chessboardModel[squareCoordinate].figure.isFirstMove = false;}
+        
         chessboardModel[this.selectedSquare].figure = new Empty();
         chessboardRender();
         this.deselectSquare();
@@ -486,6 +522,7 @@ const chessboardGameInfo = {
         } else {
             this.moveFigure(squareCoordinate);
         }
+        chessboardRender();
     }
 }
 
@@ -495,13 +532,22 @@ function chessboardRender(){
     for(let i = 1; i <= 8; i++){
         for(let j = 1; j <= 8; j++){
             let figureHTML = "";
+            let classHTML = "";
+            
             let figure = chessboardModel[LITERAS[i]+''+j].figure;
             if(figure.name!==FIGURES.EMPTY){
                 figureHTML = `<img draggable="false" src="${figure.image_src}" alt="${figure.name}" width="100%" height="100%" >`
+                classHTML = "can-select-square";
             }
+            
+            if(chessboardGameInfo.selectedSquare===LITERAS[i]+''+j){ classHTML = "selected-square"; }
 
+            if(chessboardGameInfo.squaresToCut.includes(LITERAS[i]+''+j)){ classHTML = "can-cut-square"; }
+            
+            if(chessboardGameInfo.squaresToMove.includes(LITERAS[i]+''+j)){ classHTML = "can-move-square"; }
+            
             //добавить класс toMove/toCut
-            chessboardHTML = chessboardHTML+`<div id="${LITERAS[i]}${j}" class="сhessboard-square ${LITERAS[i]} row${j} ${(i+j)%2===0?"black-square":"white-square"}">${figureHTML}</div>`;
+            chessboardHTML = chessboardHTML+`<div id="${LITERAS[i]}${j}" class="сhessboard-square ${classHTML} ${LITERAS[i]} row${j} ${(i+j)%2===0?"black-square":"white-square"}">${figureHTML}</div>`;
         }
     }
     document.getElementsByClassName("сhessboard")[0].innerHTML = chessboardHTML;

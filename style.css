@@ -57,18 +57,6 @@ header{
     background-color: #BAB9EB;
 }
 
-@keyframes selectSquare {
-    /* 100%{background-color: #B0DBE7;}     */
-    100%{background-color: #B875E9;}    
-    /* 100%{opacity: 0.75;} */
-}
-.сhessboard-square:hover{
-    animation-name: selectSquare;
-    animation-duration: 0.2s;
-    animation-fill-mode: forwards;
-    animation-timing-function: ease-in-out;
-    cursor: pointer;
-}
 .maincontent{
     width: 100%;
     display: flex;
@@ -82,5 +70,31 @@ header{
     background-color: green;
     right: 10px;
     top:10px; 
+}
+
+@keyframes selectSquare {
+    /* 100%{background-color: #B0DBE7;}     */
+    100%{background-color: #B875E9;}    
+    /* 100%{opacity: 0.75;} */
+}
+.can-select-square:hover{
+    animation-name: selectSquare;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-in-out;
+    cursor: pointer;
+
+}
+.selected-square{
+    background-color: #B875E9;
+}
+.can-move-square{
+    /* background-color: rgba(184,117,233,0.5); */
+    opacity: 0.25;
+    cursor: pointer;
+}
+.can-cut-square{
+    background-color: #5F1893;
+    cursor: pointer;
 }
 /* https://colorscheme.ru/#40122ssrrRpOc */

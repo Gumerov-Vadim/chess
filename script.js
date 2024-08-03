@@ -285,7 +285,6 @@ function King(color){
         this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_KING;
     }
 
-    
     this.canMove = function(coordinate){
 
         const litAndNum = coordinateToLitAndNum(coordinate);
@@ -310,6 +309,110 @@ function King(color){
 
         return {squaresToMove,squaresToCut};
     }
+
+    this.isUnderAttack = function(coordinate){
+
+        const litAndNum = coordinateToLitAndNum(coordinate);
+        const litera = litAndNum.litera;
+        const number = litAndNum.number;
+
+        for(let i = number + 1; i <= 8; i++){
+            if([FIGURES.QUEEN,FIGURES.ROOK].includes(chessboardModel[litera+''+i].figure.name)){
+                if(chessboardModel[litera+''+i].figure.color !== this.color) return true;
+            }
+        }
+
+        for(let i = number - 1; i >= 1; i--){
+            if([FIGURES.QUEEN,FIGURES.ROOK].includes(chessboardModel[litera+''+i].figure.name)){
+                if(chessboardModel[litera+''+i].figure.color !== this.color) return true;
+            }
+        }
+
+        const key = +Object.keys(LITERAS).find(k => LITERAS[k] === litera);
+
+        for(let i = key + 1; i <= 8; i++){
+            if([FIGURES.QUEEN,FIGURES.ROOK].includes(chessboardModel[LITERAS[i]+''+number].figure.name)){
+                if(chessboardModel[LITERAS[i]+''+number].figure.color !== this.color) return true;
+            }
+        }
+
+        for(let i = key - 1; i >= 1; i--){
+            if([FIGURES.QUEEN,FIGURES.ROOK].includes(chessboardModel[LITERAS[i]+''+number].figure.name)){
+                if(chessboardModel[LITERAS[i]+''+number].figure.color !== this.color) return true;
+            }
+        }
+        
+        let j = key;
+        for(let i = number + 1; i <= 8; i++){
+            j++;
+            if(!(j<=8)) break;
+            
+            if([FIGURES.QUEEN,FIGURES.BISHOP].includes(chessboardModel[LITERAS[j]+''+i].figure.name)){
+                if(chessboardModel[LITERAS[j]+''+i].figure.color !== this.color) return true;
+            }
+        }
+
+        j = key;
+        for(let i = number - 1; i >= 1; i--){
+            j--;
+            if(!(j>=1)) break;
+          
+            if([FIGURES.QUEEN,FIGURES.BISHOP].includes(chessboardModel[LITERAS[j]+''+i].figure.name)){
+                if(chessboardModel[LITERAS[j]+''+i].figure.color !== this.color) return true;
+            }
+        }
+
+       
+        j = key;
+        for(let i = number + 1; i <= 8; i++){
+            j--;
+            if(!(j>=1)) break;
+            
+            if([FIGURES.QUEEN,FIGURES.BISHOP].includes(chessboardModel[LITERAS[j]+''+i].figure.name)){
+                if(chessboardModel[LITERAS[j]+''+i].figure.color !== this.color) return true;
+            }
+            }
+
+        j = key;
+        for(let i = number - 1; i >= 1; i--){
+            j++;
+            if(!(j<=8)) break;
+                
+            if([FIGURES.QUEEN,FIGURES.BISHOP].includes(chessboardModel[LITERAS[j]+''+i].figure.name)){
+                if(chessboardModel[LITERAS[j]+''+i].figure.color !== this.color) return true;
+            }
+        }
+
+        const d_knightMoves = {
+            1:{litera:-2,number:1},
+            2:{litera:2,number:1},
+            3:{litera:1,number:-2},
+            4:{litera:1,number:2},
+            5:{litera:-2,number:-1},
+            6:{litera:2,number:-1},
+            7:{litera:-1,number:-2},
+            8:{litera:-1,number:2},
+        }
+        for(let i = 1; i <= 8; i++){
+                let squareToMoveKnight = LITERAS[d_knightMoves[i].litera+key]+''+(d_knightMoves[i].number+number);
+                if(!chessboardModel[squareToMoveKnight]) continue;
+                if(chessboardModel[squareToMoveKnight].figure.name===FIGURES.KNIGHT&&chessboardModel[squareToMoveKnight].figure.color!==this.color){
+                    return true;
+                }
+            }
+            
+        const d = this.color === COLORS.WHITE?1:-1;
+
+    if(chessboardModel[LITERAS[key+1]+''+(number+d)]?.figure?.name === FIGURES.PAWN) {
+        if(chessboardModel[LITERAS[key+1]+''+(number+d)].figure.color !== this.color) return true;
+    }
+    
+    if(chessboardModel[LITERAS[key-1]+''+(number+d)]?.figure?.name === FIGURES.PAWN) {
+        if(chessboardModel[LITERAS[key-1]+''+(number+d)].figure.color !== this.color) return true;
+    }
+
+        return false;
+    }
 }
 function Queen(color){
     this.name = FIGURES.QUEEN;
@@ -321,7 +424,6 @@ function Queen(color){
         this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_QUEEN;
     }
 
-    
     this.canMove = function(coordinate){
         const litAndNum = coordinateToLitAndNum(coordinate);
         const litera = litAndNum.litera;

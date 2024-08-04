@@ -80,24 +80,30 @@ function Pawn(color){
 
                 if(chessboardModel[LITERAS[key]+''+(number+d)]){
                     if(chessboardModel[LITERAS[key]+''+(number+d)].figure.name===FIGURES.EMPTY){
+                        
                         squaresToMove.push(LITERAS[key]+''+(number+d));
-                    }
-                }
-                
-                if(this.isFirstMove){
-                    if(chessboardModel[LITERAS[key]+''+(number+2*d)]){
-                        if(chessboardModel[LITERAS[key]+''+(number+2*d)].figure.name===FIGURES.EMPTY){
-                            squaresToMove.push(LITERAS[key]+''+(number+2*d));
+
+                        if(this.isFirstMove){
+                            if(chessboardModel[LITERAS[key]+''+(number+2*d)]){
+                                if(chessboardModel[LITERAS[key]+''+(number+2*d)].figure.name===FIGURES.EMPTY){
+                                    squaresToMove.push(LITERAS[key]+''+(number+2*d));
+                                }
+                            }
                         }
                     }
                 }
-        
+                
+            const pawnCut = function(squareToCut){
+                const figureToCut = chessboardModel[squareToCut].figure;
+                if(figureToCut.name!==FIGURES.EMPTY&&figureToCut.color !== this.color) squaresToCut.push(squareToCut)
+            }
+
             if(chessboardModel[LITERAS[key+1]+''+(number+d)]?.figure) {
-                if(chessboardModel[LITERAS[key+1]+''+(number+d)].figure.color !== this.color) squaresToCut.push(LITERAS[key+1]+''+(number+d))
+                pawnCut(LITERAS[key+1]+''+(number+d));
             }
             
             if(chessboardModel[LITERAS[key-1]+''+(number+d)]?.figure) {
-                if(chessboardModel[LITERAS[key-1]+''+(number+d)].figure.color !== this.color) squaresToCut.push(LITERAS[key-1]+''+(number+d))
+                pawnCut(LITERAS[key-1]+''+(number+d));
             }
 
         return {squaresToMove,squaresToCut};

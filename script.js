@@ -728,6 +728,15 @@ if(chessboardModel[LITERAS[key-1]+''+(number+d)]?.figure?.name === FIGURES.PAWN)
     if(chessboardModel[LITERAS[key-1]+''+(number+d)].figure.color !== color) return true;
 }
 
+for(let i = number - 1; i <= number + 1; i++){
+    for(let j = key - 1; j <= key + 1; j++){
+        let currentCoordinate = LITERAS[j]+''+i;
+        if(!chessboardModel[currentCoordinate]) continue;
+        if(i===number&&j===key) continue;
+        if(chessboardModel[currentCoordinate].figure.name===FIGURES.KING&&chessboardModel[currentCoordinate].figure.color!==color) return true;
+        }
+    }
+
     return false;
 }
 

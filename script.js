@@ -92,10 +92,11 @@ function Pawn(color){
                         }
                     }
                 }
-                
+            
+            const pawnColor = this.color;
             const pawnCut = function(squareToCut){
                 const figureToCut = chessboardModel[squareToCut].figure;
-                if(figureToCut.name!==FIGURES.EMPTY&&figureToCut.color !== this.color) squaresToCut.push(squareToCut)
+                if(figureToCut.name!==FIGURES.EMPTY&&figureToCut.color !== pawnColor) squaresToCut.push(squareToCut)
             }
 
             if(chessboardModel[LITERAS[key+1]+''+(number+d)]?.figure) {
@@ -784,6 +785,3 @@ function createChessboard(){
 }
 createChessboard();
 chessboardRender();
-
-
-

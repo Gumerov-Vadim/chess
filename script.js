@@ -614,9 +614,8 @@ function isUnderAttack(coordinate,figureColor){
         if(isEmpty(currentCoordinate)) continue;
         if([FIGURES.QUEEN,FIGURES.ROOK].includes(chessboardModel[currentCoordinate].figure.name)){
             if(chessboardModel[currentCoordinate].figure.color !== color) return true;
-        } else {
-            break;
         }
+        break;
     }
 
     for(let i = number - 1; i >= 1; i--){
@@ -624,9 +623,8 @@ function isUnderAttack(coordinate,figureColor){
         if(isEmpty(currentCoordinate)) continue;
         if([FIGURES.QUEEN,FIGURES.ROOK].includes(chessboardModel[litera+''+i].figure.name)){
             if(chessboardModel[litera+''+i].figure.color !== color) return true;
-        } else {
-            break;
         }
+        break;
     }
 
     const key = +Object.keys(LITERAS).find(k => LITERAS[k] === litera);
@@ -636,9 +634,8 @@ function isUnderAttack(coordinate,figureColor){
         if(isEmpty(currentCoordinate)) continue;
         if([FIGURES.QUEEN,FIGURES.ROOK].includes(chessboardModel[LITERAS[i]+''+number].figure.name)){
             if(chessboardModel[LITERAS[i]+''+number].figure.color !== color) return true;
-        } else {
-            break;
         }
+        break;
     }
 
     for(let i = key - 1; i >= 1; i--){
@@ -646,9 +643,8 @@ function isUnderAttack(coordinate,figureColor){
         if(isEmpty(currentCoordinate)) continue;
         if([FIGURES.QUEEN,FIGURES.ROOK].includes(chessboardModel[LITERAS[i]+''+number].figure.name)){
             if(chessboardModel[LITERAS[i]+''+number].figure.color !== color) return true;
-        } else {
-            break;
         }
+        break;
     }
     
     let j = key;
@@ -659,12 +655,9 @@ function isUnderAttack(coordinate,figureColor){
         let currentCoordinate = LITERAS[j]+''+i;
         if(isEmpty(currentCoordinate)) continue;
         if([FIGURES.QUEEN,FIGURES.BISHOP].includes(chessboardModel[LITERAS[j]+''+i].figure.name)){
-            if(chessboardModel[LITERAS[j]+''+i].figure.color !== color){
-                return true;
-            } else {
-                break;
-            }
+            if(chessboardModel[LITERAS[j]+''+i].figure.color !== color) return true;
         }
+        break;
     }
 
     j = key;
@@ -675,12 +668,9 @@ function isUnderAttack(coordinate,figureColor){
         let currentCoordinate = LITERAS[j]+''+i;
         if(isEmpty(currentCoordinate)) continue;
         if([FIGURES.QUEEN,FIGURES.BISHOP].includes(chessboardModel[LITERAS[j]+''+i].figure.name)){
-            if(chessboardModel[LITERAS[j]+''+i].figure.color !== color){
-                return true;
-            } else {
-                break;
-            }
+            if(chessboardModel[LITERAS[j]+''+i].figure.color !== color) return true;
         }
+        break;
     }
 
    
@@ -692,13 +682,10 @@ function isUnderAttack(coordinate,figureColor){
         let currentCoordinate = LITERAS[j]+''+i;
         if(isEmpty(currentCoordinate)) continue;
         if([FIGURES.QUEEN,FIGURES.BISHOP].includes(chessboardModel[LITERAS[j]+''+i].figure.name)){
-            if(chessboardModel[LITERAS[j]+''+i].figure.color !== color){
-                return true;
-            } else {
-                break;
-            }
+            if(chessboardModel[LITERAS[j]+''+i].figure.color !== color) return true;
         }
-        }
+        break;
+    }
 
     j = key;
     for(let i = number - 1; i >= 1; i--){
@@ -708,12 +695,9 @@ function isUnderAttack(coordinate,figureColor){
         let currentCoordinate = LITERAS[j]+''+i;
         if(isEmpty(currentCoordinate)) continue;
         if([FIGURES.QUEEN,FIGURES.BISHOP].includes(chessboardModel[LITERAS[j]+''+i].figure.name)){
-            if(chessboardModel[LITERAS[j]+''+i].figure.color !== color){
-                return true;
-            } else {
-                break;
-            }
+            if(chessboardModel[LITERAS[j]+''+i].figure.color !== color) return true;
         }
+        break;
     }
 
     const d_knightMoves = {

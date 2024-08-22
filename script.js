@@ -509,7 +509,6 @@ function ChessboardSquare(litera,number){
     this.litera = litera;
     this.number = number;
     this.figure = createFigure(litera,number);
-    //to do
 }
 const chessboardModel= {
 
@@ -564,7 +563,6 @@ const chessboardGameInfo = {
                 chessboardModel[LITERAS[8] + '' + number].figure = new Empty();
             }
 
-
             chessboardRender();
             this.deselectSquare();
             return;
@@ -588,7 +586,7 @@ const chessboardGameInfo = {
 
     clickHandler: function(squareCoordinate){
         if(!this.selectedSquare){
-            if(chessboardModel[squareCoordinate].figure.name === FIGURES.EMPTY){return;}
+            if(chessboardModel[squareCoordinate].figure.name === FIGURES.EMPTY){ return; }
 
             const {squaresToMove,squaresToCut,squaresToCastling} = chessboardModel[squareCoordinate].figure.canMove(squareCoordinate);
             chessboardGameInfo.selectSquare(squareCoordinate,squaresToMove,squaresToCut,squaresToCastling);
@@ -761,7 +759,6 @@ function chessboardRender(){
             
             if(chessboardGameInfo.squaresToMove.includes(LITERAS[i]+''+j)){ classHTML = "can-move-square"; }
             
-            //добавить класс toMove/toCut
             chessboardHTML = chessboardHTML+`<div id="${LITERAS[i]}${j}" class="сhessboard-square ${classHTML} ${LITERAS[i]} row${j} ${(i+j)%2===0?"black-square":"white-square"}">${figureHTML}</div>`;
         }
     }
@@ -774,7 +771,6 @@ function chessboardRender(){
             chessboardGameInfo.clickHandler(this.id);
         };
     });
-    //getElementByClassName( toMove/toCut ).addEventListener (click, foo);
 }
 function createChessboard(){
     for(let i = 1; i <= 8; i++){

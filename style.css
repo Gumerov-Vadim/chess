@@ -37,6 +37,74 @@ footer *{
 header{
     background-color: #272599;
 }
+.chess-field{
+    padding: 20px;
+    background-color: #000;
+}
+.a::before{
+    color: white;
+    position: absolute;
+    left: -14px;
+    margin-top: 35px;
+}
+
+.row1::after{
+    color: white;
+    position: absolute;
+    bottom: -18px;
+    margin-left: -45px;
+}
+
+#a1::before{
+content: "1";
+}
+#a2::before{
+content: "2";
+}
+#a3::before{
+content: "3";
+}
+#a4::before{
+content: "4";
+}
+#a5::before{
+content: "5";
+}
+#a6::before{
+content: "6";
+}
+#a7::before{
+content: "7";
+}
+#a8::before{
+content: "8";
+}
+
+#a1::after{
+    content: "a";
+}
+#b1::after{
+    content: "b";
+}
+#c1::after{
+    content: "c";
+}
+#d1::after{
+    content: "d";
+}
+#e1::after{
+    content: "e";
+}
+#f1::after{
+    content: "f";
+}
+#g1::after{
+    content: "g";
+}
+#h1::after{
+    content: "h";
+}
+
 .сhessboard{
     width: 70vh;
     height: 70vh;
@@ -45,6 +113,7 @@ header{
     flex-direction: column-reverse;
     border: #272599 1px;
     background-color: #8280EB;
+    position: relative;
 }
 .сhessboard-square{
     width: 12.5%;

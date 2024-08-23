@@ -519,7 +519,7 @@ const chessboardGameInfo = {
     squaresToMove: [],
     squaresToCut: [],
     squaresToCastling: [],
-    currentTurn:COLORS.WHITE,
+    currentTurnColor:COLORS.WHITE,
 
     switchTurn: function(){
         this.currentTurn = this.currentTurn===COLORS.WHITE?COLORS.BLACK:COLORS.WHITE;
@@ -541,6 +541,7 @@ const chessboardGameInfo = {
             return;
         };
 
+        this.switchTurn();
         if(this.squaresToCastling?.includes(squareCoordinate)){
             chessboardModel[squareCoordinate].figure = chessboardModel[this.selectedSquare].figure;
             chessboardModel[squareCoordinate].figure.isFirstMove = false;
@@ -587,7 +588,7 @@ const chessboardGameInfo = {
     clickHandler: function(squareCoordinate){
         if(!this.selectedSquare){
             if(chessboardModel[squareCoordinate].figure.name === FIGURES.EMPTY){ return; }
-
+            if(chessboardModel[squareCoordinate].figure.color !== this.currentTurnColor){ return; }
             const {squaresToMove,squaresToCut,squaresToCastling} = chessboardModel[squareCoordinate].figure.canMove(squareCoordinate);
             chessboardGameInfo.selectSquare(squareCoordinate,squaresToMove,squaresToCut,squaresToCastling);
         } else {

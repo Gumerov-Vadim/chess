@@ -46,6 +46,7 @@ header{
     position: absolute;
     left: -14px;
     margin-top: 35px;
+    opacity: 1 !important;
 }
 
 .row1::after{
@@ -53,6 +54,7 @@ header{
     position: absolute;
     bottom: -18px;
     margin-left: -45px;
+    opacity: 1 !important;
 }
 
 #a1::before{
@@ -112,7 +114,7 @@ content: "8";
     flex-wrap: wrap;
     flex-direction: column-reverse;
     border: #272599 1px;
-    background-color: #8280EB;
+    /* background-color: #8280EB; */
     position: relative;
 }
 .сhessboard-square{
@@ -158,10 +160,15 @@ content: "8";
     background-color: #B875E9;
 }
 .can-move-square{
-    /* background-color: rgba(184,117,233,0.5); */
-    opacity: 0.25;
     cursor: pointer;
 }
+.can-move-square.black-square{
+    background-color: rgb(97, 96, 191);
+}
+.can-move-square.white-square{
+    background-color: rgb(145, 142, 235);
+}
+
 .can-cut-square{
     background-color: #5F1893;
     cursor: pointer;

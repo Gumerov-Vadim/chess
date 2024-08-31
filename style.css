@@ -46,7 +46,6 @@ header{
     position: absolute;
     left: -14px;
     margin-top: 35px;
-    opacity: 1 !important;
 }
 
 .row1::after{
@@ -54,7 +53,6 @@ header{
     position: absolute;
     bottom: -18px;
     margin-left: -45px;
-    opacity: 1 !important;
 }
 
 #a1::before{

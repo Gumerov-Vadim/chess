@@ -522,7 +522,6 @@ let chessboardGameInfo = {
     currentTurnColor:COLORS.WHITE,
     blackKingSquare:"",
     whiteKingSquare:"",
-
 }
 let gameController = {
     gameInfo: chessboardGameInfo,
@@ -603,7 +602,8 @@ let gameController = {
         } else {
 
             const chessboardGameInfoClone = Object.assign({},this.gameInfo);
-            const chessboardModelClone = structuredClone(chessboardModel);
+            const chessboardModelClone = getChessboardModelPrototype();
+            // const chessboardModelClone = structuredClone(chessboardModel);
             const selectedSquareClone = this.gameInfo.selectedSquare;
             if(this.moveFigure(squareCoordinate)){
                 saveMoveToHistory(selectedSquareClone,squareCoordinate,chessboardModelClone,chessboardGameInfoClone);
@@ -614,14 +614,55 @@ let gameController = {
     }
 }
 const gameHistory = [];
+function getChessboardModelPrototype(){
+    const chessboardModelPrototype = {};
+    for (key in chessboardModel){
+        chessboardModelPrototype[key] = Object.assign({},chessboardModel[key]);
+        chessboardModelPrototype[key].figure = {name:chessboardModel[key].figure.name,color:chessboardModel[key].figure.color}; 
+    }
+    return chessboardModelPrototype;
+}
+function createFigureByNameAndColor(name,color){
+    switch(name){
+        case FIGURES.BISHOP:
+            return new Bishop(color);
+            break;
+        case FIGURES.EMPTY:
+            return new Empty();
+            break;
+        case FIGURES.KING:
+            return new King(color);
+            break;
+        case FIGURES.KNIGHT:
+            return new Knight(color);
+            break;
+        case FIGURES.PAWN:
+            return new Pawn(color);
+            break;
+        case FIGURES.QUEEN:
+            return new Queen(color);
+            break;
+        case FIGURES.ROOK:
+            return new Rook(color);
+    }
+}
+function setChessboardModelByPrototype(chessboardModelPrototype){
+    chessboardModel = Object.assign({},chessboardModelPrototype);
+    for (key in chessboardModel){
+        chessboardModel[key].figure = createFigureByNameAndColor(chessboardModelPrototype[key].figure.name,chessboardModelPrototype[key].figure.color); 
+    }
+    return chessboardModel;
+}
+
 function saveMoveToHistory(fromSquare,toSquare,chessboardModelClone,chessboardGameInfoClone){
     gameHistory.push({fromSquare,toSquare,chessboardModel:chessboardModelClone,chessboardGameInfo:chessboardGameInfoClone});
 }
 function cancelMove(){
     lastMove = gameHistory.pop();
     if(lastMove){
-        chessboardModel = lastMove.chessboardModel;
+        setChessboardModelByPrototype(lastMove.chessboardModel);
         chessboardGameInfo = lastMove.chessboardGameInfo;
+        gameController.gameInfo = chessboardGameInfo;
         gameController.deselectSquare();
         chessboardRender();
     }

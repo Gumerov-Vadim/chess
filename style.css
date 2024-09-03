@@ -41,18 +41,26 @@ header{
     padding: 20px;
     background-color: #000;
 }
+.a{
+    position: relative;
+}
 .a::before{
     color: white;
     position: absolute;
     left: -14px;
-    margin-top: 35px;
+    top: 35px;
 }
-
+.row1{
+    position: relative;
+}
 .row1::after{
     color: white;
+    display: flow-root;
     position: absolute;
-    bottom: -18px;
-    margin-left: -45px;
+    left: 0px;
+    right: 0px;
+    bottom: -19px;
+    text-align: center;
 }
 
 #a1::before{

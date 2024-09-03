@@ -597,7 +597,29 @@ let gameController = {
         if(!this.gameInfo.selectedSquare){
             if(chessboardModel[squareCoordinate].figure.name === FIGURES.EMPTY){ return; }
             if(chessboardModel[squareCoordinate].figure.color !== this.gameInfo.currentTurnColor){ return; }
-            const {squaresToMove,squaresToCut,squaresToCastling} = chessboardModel[squareCoordinate].figure.canMove(squareCoordinate);
+            let {squaresToMove,squaresToCut,squaresToCastling} = chessboardModel[squareCoordinate].figure.canMove(squareCoordinate);
+            
+            {
+            let squares = squaresToMove.concat(squaresToCut,squaresToCastling).filter((square)=>square!==undefined);
+
+                squares = squares.filter(square=>{
+                    gameController.selectSquare(squareCoordinate,squaresToMove,squaresToCut,squaresToCastling);
+                    this.clickHandler(square);
+                    this.switchTurn();
+                    if(isThatCheck()){
+                        cancelMove();
+                        return false;
+                    } else {
+                        cancelMove();
+                        return true;
+                    }
+                })
+
+            squaresToMove = squaresToMove?.filter((square)=>squares.includes(square));
+            squaresToCut = squaresToCut?.filter((square)=>squares.includes(square));
+            squaresToCastling = squaresToCastling?.filter((square)=>squares.includes(square));
+            }
+
             gameController.selectSquare(squareCoordinate,squaresToMove,squaresToCut,squaresToCastling);
         } else {
 
@@ -807,10 +829,13 @@ for(let i = number - 1; i <= number + 1; i++){
 
     return false;
 }
+function getKingSquare(color){
+    return Object.values(chessboardModel).find((square)=>{return (square.figure.name===FIGURES.KING)&&square.figure.color===color});
+}
 function isThatCheckmate(){
     const currentTurnColor = chessboardGameInfo.currentTurnColor;
 
-    const kingSquare = Object.values(chessboardModel).find((square)=>{return (square.figure.name===FIGURES.KING)&&square.figure.color===currentTurnColor});
+    const kingSquare = getKingSquare(currentTurnColor)
     const kingCoordinate = LitAndNumToCoordinate(kingSquare.litera,kingSquare.number);
     
     if(!isUnderAttack(kingCoordinate,currentTurnColor)) return false;
@@ -821,7 +846,6 @@ function isThatCheckmate(){
     }
 
     const  friendlyFigureSquares = Object.values(chessboardModel).filter((square)=>{return ((square.figure.color===currentTurnColor)&&(square.figure.name!==FIGURES.KING))});
-    
     
     return friendlyFigureSquares.every(friendlyFigureSquare => {
         const figureCoordinate = LitAndNumToCoordinate(friendlyFigureSquare.litera,friendlyFigureSquare.number);
@@ -839,6 +863,13 @@ function isThatCheckmate(){
             return true;
         });
     });
+}
+function isThatCheck(){
+    const currentTurnColor = chessboardGameInfo.currentTurnColor;
+    const kingSquare = getKingSquare(currentTurnColor)
+    const kingCoordinate = LitAndNumToCoordinate(kingSquare.litera,kingSquare.number);
+    
+    return isUnderAttack(kingCoordinate,currentTurnColor);
 }
 let chessboardHTML = "";
 function chessboardRender(){

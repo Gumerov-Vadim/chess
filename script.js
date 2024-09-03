@@ -677,7 +677,6 @@ function isUnderAttack(coordinate,figureColor){
 
     const color = figureColor==null?chessboardModel[coordinate].figure.color:figureColor;
     
-    
     for(let i = number + 1; i <= 8; i++){
         let currentCoordinate = litera+''+i;
         if(isEmpty(currentCoordinate)) continue;
@@ -808,7 +807,39 @@ for(let i = number - 1; i <= number + 1; i++){
 
     return false;
 }
+function isThatCheckmate(){
+    const currentTurnColor = chessboardGameInfo.currentTurnColor;
 
+    const kingSquare = Object.values(chessboardModel).find((square)=>{return (square.figure.name===FIGURES.KING)&&square.figure.color===currentTurnColor});
+    const kingCoordinate = LitAndNumToCoordinate(kingSquare.litera,kingSquare.number);
+    
+    if(!isUnderAttack(kingCoordinate,currentTurnColor)) return false;
+    
+    {
+    const {squaresToMove,squaresToCut,squaresToCastling} = kingSquare.figure.canMove(kingCoordinate);
+    if(squaresToMove.length||squaresToCut.length||squaresToCastling.length){ return false;}
+    }
+
+    const  friendlyFigureSquares = Object.values(chessboardModel).filter((square)=>{return ((square.figure.color===currentTurnColor)&&(square.figure.name!==FIGURES.KING))});
+    
+    
+    return friendlyFigureSquares.every(friendlyFigureSquare => {
+        const figureCoordinate = LitAndNumToCoordinate(friendlyFigureSquare.litera,friendlyFigureSquare.number);
+        const {squaresToMove,squaresToCut,squaresToCastling} = friendlyFigureSquare.figure.canMove(figureCoordinate);
+        const squares = squaresToMove.concat(squaresToCut,squaresToCastling).filter((square)=>square!==undefined);
+        return squares.every((square)=>{
+            gameController.clickHandler(figureCoordinate);
+            gameController.clickHandler(square);
+
+            if(!isUnderAttack(kingCoordinate)){
+                cancelMove();
+                return false;
+            };
+            cancelMove();
+            return true;
+        });
+    });
+}
 let chessboardHTML = "";
 function chessboardRender(){
     chessboardHTML = "";

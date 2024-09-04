@@ -319,10 +319,10 @@ function King(color){
             }
         if(this.isFirstMove){
             if(chessboardModel[LITERAS[8]+''+number].figure.isFirstMove){    
-                for(let i = key + 1; i <= 7; i++){
+                for(let i = key; i <= 7; i++){
                     const currentSquare = LITERAS[i]+''+number;
                     
-                    if(chessboardModel[currentSquare].figure.name !== FIGURES.EMPTY){
+                    if((chessboardModel[currentSquare].figure.name !== FIGURES.EMPTY)&&(chessboardModel[currentSquare].figure!==this)){
                         break;
                     }
 
@@ -336,10 +336,10 @@ function King(color){
             }
 
             if(chessboardModel[LITERAS[1]+''+number].figure.isFirstMove){    
-                for(let i = key - 1; i >= 2; i--){
+                for(let i = key; i >= 2; i--){
                     const currentSquare = LITERAS[i]+''+number;
                     
-                    if(chessboardModel[currentSquare].figure.name !== FIGURES.EMPTY){
+                    if((chessboardModel[currentSquare].figure.name !== FIGURES.EMPTY)&&(chessboardModel[currentSquare].figure!==this)){
                         break;
                     }
 

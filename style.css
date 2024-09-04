@@ -142,11 +142,25 @@ content: "8";
 }
 .sidebar{
     position: absolute;
-    width: 100px;
-    height: 200px;
-    background-color: green;
+    width: 220px;
+    height: 500px;
+    background-color: #70CDE7;
     right: 10px;
-    top:10px; 
+    top:110px; 
+    color: #012B37;
+    border-radius: 5px;
+    overflow-y: scroll;
+}
+.sidebar::-webkit-scrollbar{
+    width: 7px;
+    background-color: #136E88;
+}
+.sidebar::-webkit-scrollbar-thumb{
+    background-color: #012B37;
+}
+#chess-story{
+    list-style: none;
+    text-align: justify;
 }
 
 @keyframes selectSquare {

@@ -520,8 +520,7 @@ let chessboardGameInfo = {
     squaresToCut: [],
     squaresToCastling: [],
     currentTurnColor:COLORS.WHITE,
-    blackKingSquare:"",
-    whiteKingSquare:"",
+    pawnConversionSquare:"",
 }
 let gameController = {
     gameInfo: chessboardGameInfo,
@@ -580,6 +579,11 @@ let gameController = {
 
         if(chessboardModel[squareCoordinate].figure.isFirstMove){chessboardModel[squareCoordinate].figure.isFirstMove = false;}
         
+        //превращение пешки
+        if(chessboardModel[squareCoordinate].figure.name===FIGURES.PAWN&&((chessboardModel[squareCoordinate].number===8)||(chessboardModel[squareCoordinate].number)===1)){
+            this.pawnConversion(squareCoordinate);
+        }
+
         chessboardModel[this.gameInfo.selectedSquare].figure = new Empty();
         chessboardRender();
         this.deselectSquare();
@@ -627,11 +631,15 @@ let gameController = {
             const chessboardModelClone = getChessboardModelPrototype();
             const selectedSquareClone = this.gameInfo.selectedSquare;
             if(this.moveFigure(squareCoordinate)){
-                saveMoveToHistory(selectedSquareClone,squareCoordinate,chessboardModelClone,chessboardGameInfoClone);
+                const figureName = chessboardModel[squareCoordinate].figure.name;
+                saveMoveToHistory(figureName,selectedSquareClone,squareCoordinate,chessboardModelClone,chessboardGameInfoClone);
             }
         }
 
         chessboardRender();
+    },
+    pawnConversion: function(squareCoordinate){
+        this.gameInfo.pawnConversionSquare = squareCoordinate;  
     }
 }
 const gameHistory = [];
@@ -683,8 +691,8 @@ function setChessboardModelByPrototype(chessboardModelPrototype){
     return chessboardModel;
 }
 
-function saveMoveToHistory(fromSquare,toSquare,chessboardModelClone,chessboardGameInfoClone){
-    gameHistory.push({fromSquare,toSquare,chessboardModel:chessboardModelClone,chessboardGameInfo:chessboardGameInfoClone});
+function saveMoveToHistory(figureName,fromSquare,toSquare,chessboardModelClone,chessboardGameInfoClone){
+    gameHistory.push({figureName,fromSquare,toSquare,chessboardModel:chessboardModelClone,chessboardGameInfo:chessboardGameInfoClone});
 }
 function cancelMove(){
     lastMove = gameHistory.pop();
@@ -878,6 +886,15 @@ function isThatCheck(){
     
     return isUnderAttack(kingCoordinate,currentTurnColor);
 }
+
+function chessHistoryRender(){
+    let gameHistoryHTML = "";
+    for(let i=0;i<gameHistory.length;i++){
+        const cannedMove = gameHistory[i];
+        gameHistoryHTML = gameHistoryHTML + `<li id="move${i}">${i+1}. ${cannedMove.figureName===FIGURES.KNIGHT?"N":cannedMove.figureName.charAt(0).toUpperCase()} ${cannedMove.fromSquare} -> ${cannedMove.toSquare}</li>`
+    }
+    document.getElementById("chess-story").innerHTML = gameHistoryHTML;
+}
 let chessboardHTML = "";
 function chessboardRender(){
     chessboardHTML = "";
@@ -910,6 +927,8 @@ function chessboardRender(){
             gameController.clickHandler(this.id);
         };
     });
+
+    chessHistoryRender()
 }
 function createChessboard(){
     for(let i = 1; i <= 8; i++){

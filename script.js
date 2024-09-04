@@ -625,7 +625,6 @@ let gameController = {
 
             const chessboardGameInfoClone = Object.assign({},this.gameInfo);
             const chessboardModelClone = getChessboardModelPrototype();
-            // const chessboardModelClone = structuredClone(chessboardModel);
             const selectedSquareClone = this.gameInfo.selectedSquare;
             if(this.moveFigure(squareCoordinate)){
                 saveMoveToHistory(selectedSquareClone,squareCoordinate,chessboardModelClone,chessboardGameInfoClone);
@@ -641,6 +640,11 @@ function getChessboardModelPrototype(){
     for (key in chessboardModel){
         chessboardModelPrototype[key] = Object.assign({},chessboardModel[key]);
         chessboardModelPrototype[key].figure = {name:chessboardModel[key].figure.name,color:chessboardModel[key].figure.color}; 
+        
+        if(chessboardModel[key].figure.isFirstMove!=null){
+            chessboardModelPrototype[key].figure.isFirstMove = chessboardModel[key].figure.isFirstMove
+        }
+        //to do сохранять isFirstMove в прототип
     }
     return chessboardModelPrototype;
 }
@@ -669,9 +673,12 @@ function createFigureByNameAndColor(name,color){
     }
 }
 function setChessboardModelByPrototype(chessboardModelPrototype){
-    chessboardModel = Object.assign({},chessboardModelPrototype);
+    chessboardModel = JSON.parse(JSON.stringify(chessboardModelPrototype));
     for (key in chessboardModel){
-        chessboardModel[key].figure = createFigureByNameAndColor(chessboardModelPrototype[key].figure.name,chessboardModelPrototype[key].figure.color); 
+        chessboardModel[key].figure = createFigureByNameAndColor(chessboardModelPrototype[key].figure.name,chessboardModelPrototype[key].figure.color);
+        if(chessboardModelPrototype[key].figure.isFirstMove!=null){
+            chessboardModel[key].figure.isFirstMove = chessboardModelPrototype[key].figure.isFirstMove;
+        }
     }
     return chessboardModel;
 }

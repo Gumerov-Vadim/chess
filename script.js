@@ -635,12 +635,15 @@ let gameController = {
                 saveMoveToHistory(figureName,selectedSquareClone,squareCoordinate,chessboardModelClone,chessboardGameInfoClone);
             }
         }
-
+    },
+    clickHandlerWithRender: function(squareCoordinate){
+        this.clickHandler(squareCoordinate);
         chessboardRender();
     },
     pawnConversion: function(squareCoordinate){
         this.gameInfo.pawnConversionSquare = squareCoordinate;  
     }
+    
 }
 const gameHistory = [];
 function getChessboardModelPrototype(){
@@ -690,7 +693,6 @@ function setChessboardModelByPrototype(chessboardModelPrototype){
     }
     return chessboardModel;
 }
-
 function saveMoveToHistory(figureName,fromSquare,toSquare,chessboardModelClone,chessboardGameInfoClone){
     gameHistory.push({figureName,fromSquare,toSquare,chessboardModel:chessboardModelClone,chessboardGameInfo:chessboardGameInfoClone});
 }
@@ -924,7 +926,7 @@ function chessboardRender(){
     
     squares.forEach(square => {
         square.onclick = function() {
-            gameController.clickHandler(this.id);
+            gameController.clickHandlerWithRender(this.id);
         };
     });
 

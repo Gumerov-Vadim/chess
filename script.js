@@ -641,22 +641,53 @@ let gameController = {
         chessboardRender();
     },
     pawnConversion: function(squareCoordinate){
-        this.gameInfo.pawnConversionSquare = squareCoordinate;
         const keycolor = this.gameInfo.currentTurnColor === COLORS.WHITE? "WHITE": "BLACK"; 
         const pawnConversionMenuHTML = `<div id="pawn-conversion-menu">
-            <div class="pawn-conversion-figure" id="pawn-conversion-knight"><img src="${FIGURES_IMAGES_SRC[keycolor].KNIGHT}"/></div>
-            <div class="pawn-conversion-figure" id="pawn-conversion-bishop"><img src="${FIGURES_IMAGES_SRC[keycolor].BISHOP}"/></div>
-            <div class="pawn-conversion-figure" id="pawn-conversion-queen"><img src="${FIGURES_IMAGES_SRC[keycolor].QUEEN}"/></div>
-            <div class="pawn-conversion-figure" id="pawn-conversion-rook"><img src="${FIGURES_IMAGES_SRC[keycolor].ROOK}"/></div>
+            <div class="pawn-conversion-figure" id="pawn-conversion-knight"><img src="${FIGURES_IMAGES_SRC[keycolor].KNIGHT}" alt="pawn-conversion-knight" width="100%" height="100%"/></div>
+            <div class="pawn-conversion-figure" id="pawn-conversion-bishop"><img src="${FIGURES_IMAGES_SRC[keycolor].BISHOP}" alt="pawn-conversion-bishop" width="100%" height="100%"/></div>
+            <div class="pawn-conversion-figure" id="pawn-conversion-queen"><img src="${FIGURES_IMAGES_SRC[keycolor].QUEEN}" alt="pawn-conversion-queen" width="100%" height="100%"/></div>
+            <div class="pawn-conversion-figure" id="pawn-conversion-rook"><img src="${FIGURES_IMAGES_SRC[keycolor].ROOK}" alt="pawn-conversion-rook" width="100%" height="100%"/></div>
         </div>`;
 
         const pawnConversionSquare = document.getElementById(squareCoordinate);
         pawnConversionSquare.innerHTML = pawnConversionMenuHTML;
+
+        const pawnConversionMenu = document.getElementById("pawn-conversion-menu");
+        pawnConversionSquare.onclick = null;
         const conversionFigures = document.getElementsByClassName("pawn-conversion-figure");
-        for(key in conversionFigures){
-            const currentFigure = conversionFigures[key];
+        
+        pawnConversionSquare.style.zIndex = 999;
+        for(let key of conversionFigures){
+            const currentFigure = key;
+            console.log(currentFigure);
+            const currentFigureName = currentFigure.firstChild?.getAttribute('alt');
             currentFigure.onclick = function(){
-                gameController.clickHandlerWithoutRender(currentFigure.id);
+                console.log(currentFigure);
+                pawnConversionMenu.remove();
+                pawnConversionSquare.onclick = this.clickHandlerWithRender;
+                //добавить обработчик выбора фигуры
+                switch(currentFigureName){
+                    case "pawn-conversion-rook":
+                        chessboardModel[squareCoordinate].figure = new Rook(chessboardGameInfo.currentTurnColor);
+                        break;
+                    case "pawn-conversion-knight":
+                        chessboardModel[squareCoordinate].figure = new Knight(chessboardGameInfo.currentTurnColor);
+                        break;
+                    case "pawn-conversion-queen":
+                        chessboardModel[squareCoordinate].figure = new Queen(chessboardGameInfo.currentTurnColor);
+                        break;
+                    case "pawn-conversion-bishop":
+                        chessboardModel[squareCoordinate].figure = new Bishop(chessboardGameInfo.currentTurnColor);
+                        break;
+                }
+                
+                const chessboardGameInfoClone = Object.assign({},this.gameInfo);
+                const chessboardModelClone = getChessboardModelPrototype();
+                const selectedSquareClone = squareCoordinate;
+                const figureName = chessboardModel[squareCoordinate].figure.name;
+                saveMoveToHistory(figureName,selectedSquareClone,squareCoordinate,chessboardModelClone,chessboardGameInfoClone);
+                chessboardRender();
+                // ошибка!!! -> gameController.clickHandlerWithoutRender(currentFigure.id);
             }
         }
         // chessboardModel[squareCoordinate].figure = new Rook(this.gameInfo.currentTurnColor);

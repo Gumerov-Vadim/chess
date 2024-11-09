@@ -193,4 +193,14 @@ content: "8";
     background-color: #5F1893;
     cursor: pointer;
 }
+#pawn-conversion-menu{
+    z-index: 9999;
+}
+.pawn-conversion-figure{
+    background-color: rgba(0,0,0,0.5);
+}
+.pawn-conversion-figure:hover{
+    background-color: rgb(145, 142, 235);
+}
+/* #pawn-conversion-knight */
 /* https://colorscheme.ru/#40122ssrrRpOc */

@@ -581,7 +581,7 @@ let gameController = {
         
         //превращение пешки
         if(chessboardModel[squareCoordinate].figure.name===FIGURES.PAWN&&((chessboardModel[squareCoordinate].number===8)||(chessboardModel[squareCoordinate].number)===1)){
-            this.pawnConversion(squareCoordinate);
+            this.gameInfo.pawnConversionSquare = squareCoordinate;
         }
 
         chessboardModel[this.gameInfo.selectedSquare].figure = new Empty();
@@ -641,7 +641,7 @@ let gameController = {
         chessboardRender();
     },
     pawnConversion: function(squareCoordinate){
-        const keycolor = this.gameInfo.currentTurnColor === COLORS.WHITE? "WHITE": "BLACK"; 
+        const keycolor = this.gameInfo.currentTurnColor !== COLORS.WHITE? "WHITE": "BLACK"; 
         const pawnConversionMenuHTML = `<div id="pawn-conversion-menu">
             <div class="pawn-conversion-figure" id="pawn-conversion-knight"><img src="${FIGURES_IMAGES_SRC[keycolor].KNIGHT}" alt="pawn-conversion-knight" width="100%" height="100%"/></div>
             <div class="pawn-conversion-figure" id="pawn-conversion-bishop"><img src="${FIGURES_IMAGES_SRC[keycolor].BISHOP}" alt="pawn-conversion-bishop" width="100%" height="100%"/></div>
@@ -659,25 +659,25 @@ let gameController = {
         pawnConversionSquare.style.zIndex = 999;
         for(let key of conversionFigures){
             const currentFigure = key;
-            console.log(currentFigure);
             const currentFigureName = currentFigure.firstChild?.getAttribute('alt');
             currentFigure.onclick = function(){
                 console.log(currentFigure);
                 pawnConversionMenu.remove();
                 pawnConversionSquare.onclick = this.clickHandlerWithRender;
                 //добавить обработчик выбора фигуры
+                gameController.switchTurn();
                 switch(currentFigureName){
                     case "pawn-conversion-rook":
-                        chessboardModel[squareCoordinate].figure = new Rook(chessboardGameInfo.currentTurnColor);
+                        chessboardModel[squareCoordinate].figure = new Rook(gameController.gameInfo.currentTurnColor);
                         break;
                     case "pawn-conversion-knight":
-                        chessboardModel[squareCoordinate].figure = new Knight(chessboardGameInfo.currentTurnColor);
+                        chessboardModel[squareCoordinate].figure = new Knight(gameController.gameInfo.currentTurnColor);
                         break;
                     case "pawn-conversion-queen":
-                        chessboardModel[squareCoordinate].figure = new Queen(chessboardGameInfo.currentTurnColor);
+                        chessboardModel[squareCoordinate].figure = new Queen(gameController.gameInfo.currentTurnColor);
                         break;
                     case "pawn-conversion-bishop":
-                        chessboardModel[squareCoordinate].figure = new Bishop(chessboardGameInfo.currentTurnColor);
+                        chessboardModel[squareCoordinate].figure = new Bishop(gameController.gameInfo.currentTurnColor);
                         break;
                 }
                 
@@ -686,6 +686,8 @@ let gameController = {
                 const selectedSquareClone = squareCoordinate;
                 const figureName = chessboardModel[squareCoordinate].figure.name;
                 saveMoveToHistory(figureName,selectedSquareClone,squareCoordinate,chessboardModelClone,chessboardGameInfoClone);
+                gameController.switchTurn();
+                gameController.gameInfo.pawnConversionSquare = "";
                 chessboardRender();
                 // ошибка!!! -> gameController.clickHandlerWithoutRender(currentFigure.id);
             }
@@ -974,11 +976,15 @@ function chessboardRender(){
     
     const squares = document.querySelectorAll('.сhessboard-square');
     
-    squares.forEach(square => {
-        square.onclick = function() {
-            gameController.clickHandlerWithRender(this.id);
-        };
-    });
+    if(!gameController.gameInfo.pawnConversionSquare){    
+        squares.forEach(square => {
+            square.onclick = function() {
+                gameController.clickHandlerWithRender(this.id);
+            };
+        });
+    } else {
+        gameController.pawnConversion(gameController.gameInfo.pawnConversionSquare);
+    }
 
     chessHistoryRender()
 }

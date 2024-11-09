@@ -21,20 +21,20 @@ const FIGURES = {
 
 const FIGURES_IMAGES_SRC = {
     BLACK: {
-    BLACK_PAWN:"./images/black_pawn.png",
-    BLACK_ROOK:"./images/black_rook.png",
-    BLACK_KNIGHT:"./images/black_knight.png",
-    BLACK_BISHOP:"./images/black_bishop.png",
-    BLACK_QUEEN:"./images/black_queen.png",
-    BLACK_KING:"./images/black_king.png",
+    PAWN:"./images/black_pawn.png",
+    ROOK:"./images/black_rook.png",
+    KNIGHT:"./images/black_knight.png",
+    BISHOP:"./images/black_bishop.png",
+    QUEEN:"./images/black_queen.png",
+    KING:"./images/black_king.png",
         },
     WHITE: {
-    WHITE_PAWN:"./images/white_pawn.png",
-    WHITE_ROOK:"./images/white_rook.png",
-    WHITE_KNIGHT:"./images/white_knight.png",
-    WHITE_BISHOP:"./images/white_bishop.png",
-    WHITE_QUEEN:"./images/white_queen.png",
-    WHITE_KING:"./images/white_king.png",
+    PAWN:"./images/white_pawn.png",
+    ROOK:"./images/white_rook.png",
+    KNIGHT:"./images/white_knight.png",
+    BISHOP:"./images/white_bishop.png",
+    QUEEN:"./images/white_queen.png",
+    KING:"./images/white_king.png",
         },
 }
 
@@ -61,9 +61,9 @@ function Pawn(color){
     this.color = color;
     this.isFirstMove = true;
     if(color === COLORS.BLACK){
-        this.image_src = FIGURES_IMAGES_SRC.BLACK.BLACK_PAWN;
+        this.image_src = FIGURES_IMAGES_SRC.BLACK.PAWN;
     } else {
-        this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_PAWN;
+        this.image_src = FIGURES_IMAGES_SRC.WHITE.PAWN;
     }
     
     this.canMove = function(coordinate){
@@ -116,9 +116,9 @@ function Rook(color){
     this.isFirstMove = true;
     
     if(color === COLORS.BLACK){
-        this.image_src = FIGURES_IMAGES_SRC.BLACK.BLACK_ROOK;
+        this.image_src = FIGURES_IMAGES_SRC.BLACK.ROOK;
     } else {
-        this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_ROOK;
+        this.image_src = FIGURES_IMAGES_SRC.WHITE.ROOK;
     }
 
     this.canMove = function(coordinate){
@@ -174,9 +174,9 @@ function Knight(color){
     this.color = color;
     
     if(color === COLORS.BLACK){
-        this.image_src = FIGURES_IMAGES_SRC.BLACK.BLACK_KNIGHT;
+        this.image_src = FIGURES_IMAGES_SRC.BLACK.KNIGHT;
     } else {
-        this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_KNIGHT;
+        this.image_src = FIGURES_IMAGES_SRC.WHITE.KNIGHT;
     }
     this.canMove = function(coordinate){
         
@@ -216,9 +216,9 @@ function Bishop(color){
     this.color = color;
     
     if(color === COLORS.BLACK){
-        this.image_src = FIGURES_IMAGES_SRC.BLACK.BLACK_BISHOP;
+        this.image_src = FIGURES_IMAGES_SRC.BLACK.BISHOP;
     } else {
-        this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_BISHOP;
+        this.image_src = FIGURES_IMAGES_SRC.WHITE.BISHOP;
     }
     
     this.canMove = function(coordinate){
@@ -289,9 +289,9 @@ function King(color){
     this.isFirstMove = true;
     
     if(color === COLORS.BLACK){
-        this.image_src = FIGURES_IMAGES_SRC.BLACK.BLACK_KING;
+        this.image_src = FIGURES_IMAGES_SRC.BLACK.KING;
     } else {
-        this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_KING;
+        this.image_src = FIGURES_IMAGES_SRC.WHITE.KING;
     }
 
     this.canMove = function(coordinate){
@@ -360,9 +360,9 @@ function Queen(color){
     this.color = color;
     
     if(color === COLORS.BLACK){
-        this.image_src = FIGURES_IMAGES_SRC.BLACK.BLACK_QUEEN;
+        this.image_src = FIGURES_IMAGES_SRC.BLACK.QUEEN;
     } else {
-        this.image_src = FIGURES_IMAGES_SRC.WHITE.WHITE_QUEEN;
+        this.image_src = FIGURES_IMAGES_SRC.WHITE.QUEEN;
     }
 
     this.canMove = function(coordinate){
@@ -641,7 +641,26 @@ let gameController = {
         chessboardRender();
     },
     pawnConversion: function(squareCoordinate){
-        this.gameInfo.pawnConversionSquare = squareCoordinate;  
+        this.gameInfo.pawnConversionSquare = squareCoordinate;
+        const keycolor = this.gameInfo.currentTurnColor === COLORS.WHITE? "WHITE": "BLACK"; 
+        const pawnConversionMenuHTML = `<div id="pawn-conversion-menu">
+            <div class="pawn-conversion-figure" id="pawn-conversion-knight"><img src="${FIGURES_IMAGES_SRC[keycolor].KNIGHT}"/></div>
+            <div class="pawn-conversion-figure" id="pawn-conversion-bishop"><img src="${FIGURES_IMAGES_SRC[keycolor].BISHOP}"/></div>
+            <div class="pawn-conversion-figure" id="pawn-conversion-queen"><img src="${FIGURES_IMAGES_SRC[keycolor].QUEEN}"/></div>
+            <div class="pawn-conversion-figure" id="pawn-conversion-rook"><img src="${FIGURES_IMAGES_SRC[keycolor].ROOK}"/></div>
+        </div>`;
+
+        const pawnConversionSquare = document.getElementById(squareCoordinate);
+        pawnConversionSquare.innerHTML = pawnConversionMenuHTML;
+        const conversionFigures = document.getElementsByClassName("pawn-conversion-figure");
+        for(key in conversionFigures){
+            const currentFigure = conversionFigures[key];
+            currentFigure.onclick = function(){
+                gameController.clickHandlerWithoutRender(currentFigure.id);
+            }
+        }
+        // chessboardModel[squareCoordinate].figure = new Rook(this.gameInfo.currentTurnColor);
+        //     return true;
     }
     
 }

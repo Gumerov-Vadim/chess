@@ -658,6 +658,8 @@ let gameController = {
         pawnConversionSquare.innerHTML = pawnConversionMenuHTML;
 
         const pawnConversionMenu = document.getElementById("pawn-conversion-menu");
+        if(coordinateToLitAndNum(squareCoordinate).number === 1)pawnConversionMenu.style.bottom = 0
+        if(coordinateToLitAndNum(squareCoordinate).number === 8)pawnConversionMenu.style.top = 0
         pawnConversionSquare.onclick = null;
         const conversionFigures = document.getElementsByClassName("pawn-conversion-figure");
         
@@ -666,10 +668,8 @@ let gameController = {
             const currentFigure = key;
             const currentFigureName = currentFigure.firstChild?.getAttribute('alt');
             currentFigure.onclick = function(){
-                console.log(currentFigure);
                 pawnConversionMenu.remove();
                 pawnConversionSquare.onclick = this.clickHandlerWithRender;
-                //добавить обработчик выбора фигуры
                 gameController.switchTurn();
                 switch(currentFigureName){
                     case "pawn-conversion-rook":
@@ -694,11 +694,8 @@ let gameController = {
                 gameController.switchTurn();
                 gameController.gameInfo.pawnConversionSquare = "";
                 chessboardRender();
-                // ошибка!!! -> gameController.clickHandlerWithoutRender(currentFigure.id);
             }
         }
-        // chessboardModel[squareCoordinate].figure = new Rook(this.gameInfo.currentTurnColor);
-        //     return true;
     }
     
 }

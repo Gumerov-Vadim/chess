@@ -126,6 +126,7 @@ content: "8";
 .сhessboard-square{
     width: 12.5%;
     height: 12.5%;
+    position: relative;
 }
 .black-square{
     background-color: #03023E;
@@ -195,6 +196,7 @@ content: "8";
 }
 #pawn-conversion-menu{
     z-index: 9999;
+    position: absolute;
 }
 .pawn-conversion-figure{
     background-color: rgba(0,0,0,0.5);

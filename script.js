@@ -96,14 +96,14 @@ function Pawn(color){
             const pawnColor = this.color;
             const pawnCut = function(squareToCut){
                 const figureToCut = chessboardModel[squareToCut].figure;
-                if(figureToCut.name!==FIGURES.EMPTY&&figureToCut.color !== pawnColor) squaresToCut.push(squareToCut)
+                if(figureToCut.name!==FIGURES.EMPTY&&figureToCut.color !== pawnColor || squareToCut === chessboardGameInfo.enPassantCaptureSquare) squaresToCut.push(squareToCut)
             }
 
-            if(chessboardModel[LITERAS[key+1]+''+(number+d)]?.figure) {
+            if(chessboardModel[LITERAS[key+1]+''+(number+d)]?.figure || LITERAS[key+1]+''+(number+d) === chessboardGameInfo.enPassantCaptureSquare) {
                 pawnCut(LITERAS[key+1]+''+(number+d));
             }
             
-            if(chessboardModel[LITERAS[key-1]+''+(number+d)]?.figure) {
+            if(chessboardModel[LITERAS[key-1]+''+(number+d)]?.figure || LITERAS[key+1]+''+(number+d) === chessboardGameInfo.enPassantCaptureSquare) {
                 pawnCut(LITERAS[key-1]+''+(number+d));
             }
 
@@ -588,12 +588,19 @@ let gameController = {
         }
 
         chessboardModel[squareCoordinate].figure = chessboardModel[this.gameInfo.selectedSquare].figure;
+        //взятие на проходе
+        if(chessboardModel[squareCoordinate].figure.name === FIGURES.PAWN && squareCoordinate === this.gameInfo.enPassantCaptureSquare){
+            
+            const cordArr = squareCoordinate.split("");
+            chessboardModel[cordArr[0] + (+cordArr[1] + (this.gameInfo.currentTurnColor === COLORS.BLACK? -1 : 1))].figure = new Empty();
+        }
 
         //Если пешка сделала два хода вперёд, то её можно взять в проходе
         if(chessboardModel[this.gameInfo.selectedSquare].figure.name === FIGURES.PAWN &&
             chessboardModel[this.gameInfo.selectedSquare].figure.isFirstMove &&
             Math.abs(Number(this.gameInfo.selectedSquare.slice(-1))-Number(squareCoordinate.slice(-1)))>1){
-                this.gameInfo.enPassantCaptureSquare = squareCoordinate;       
+                const cordArr = squareCoordinate.split("");
+                this.gameInfo.enPassantCaptureSquare =  cordArr[0] + (+cordArr[1] + (this.gameInfo.currentTurnColor === COLORS.BLACK? -1 : 1));       
             } else {
                 this.gameInfo.enPassantCaptureSquare = "";       
             }

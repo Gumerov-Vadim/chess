@@ -514,14 +514,17 @@ let chessboardModel= {
 
 }
 
-let chessboardGameInfo = {
-    selectedSquare: "",
-    squaresToMove: [],
-    squaresToCut: [],
-    squaresToCastling: [],
-    currentTurnColor:COLORS.WHITE,
-    pawnConversionSquare:"",
-}
+let chessboardGameInfo = {};
+function chessboardGameInfoReset(){
+    chessboardGameInfo.selectedSquare = "";
+    chessboardGameInfo.squaresToMove = [];
+    chessboardGameInfo.squaresToCut = [];
+    chessboardGameInfo.squaresToCastling = [];
+    chessboardGameInfo.currentTurnColor = COLORS.WHITE;
+    chessboardGameInfo.pawnConversionSquare = "";
+    }
+chessboardGameInfoReset();
+
 let gameController = {
     gameInfo: chessboardGameInfo,
     getCurrentGameInfo: function(){
@@ -699,7 +702,7 @@ let gameController = {
     }
     
 }
-const gameHistory = [];
+let gameHistory = [];
 function getChessboardModelPrototype(){
     const chessboardModelPrototype = {};
     for (key in chessboardModel){
@@ -749,6 +752,9 @@ function setChessboardModelByPrototype(chessboardModelPrototype){
 }
 function saveMoveToHistory(figureName,fromSquare,toSquare,chessboardModelClone,chessboardGameInfoClone){
     gameHistory.push({figureName,fromSquare,toSquare,chessboardModel:chessboardModelClone,chessboardGameInfo:chessboardGameInfoClone});
+}
+function clearHistory(){
+    gameHistory = [];
 }
 function cancelMove(){
     lastMove = gameHistory.pop();
@@ -977,24 +983,41 @@ function chessboardRender(){
     }
     chessHistoryRender()
     if((!chessboardGameInfo.selectedSquare.length||!chessboardGameInfo.squaresToCut.length||!chessboardGameInfo.squaresToMove.length)&&isThatCheckmate()){
-        const finishWindow = document.createElement("div");
-        finishWindow.id = finishWindow;
-        finishWindow.style.zIndex = 99999;
-        finishWindow.style.width = "100vw";
-        finishWindow.style.height = "100vh";
-        finishWindow.style.position = "fixed";
-        finishWindow.style.left = 0;
-        finishWindow.style.top = 0;
-        finishWindow.style.backgroundColor = "rgba(0,0,0,0.6)";
-        document.body.appendChild(finishWindow); 
+        gameController.switchTurn();
+        checkmateHandler(chessboardGameInfo.currentTurnColor);
     }
+}
+
+function checkmateHandler(winner){
+    const finishWindow = document.getElementById("finish-window");
+    finishWindow.classList.remove("invisible");
+
+    const winnerSpan = document.getElementById("winner-span");
+    winnerSpan.innerHTML = winner;
 }
 function createChessboard(){
     for(let i = 1; i <= 8; i++){
         for(let j = 1; j <= 8; j++){
-            chessboardModel[LITERAS[i]+''+j]= new ChessboardSquare(LITERAS[i],j);
+            chessboardModel[LITERAS[i]+''+j] = new ChessboardSquare(LITERAS[i],j);
         }
     }
 }
-createChessboard();
-chessboardRender();
+function initFinishWindow(){
+    const finishWindow = document.getElementById("finish-window");
+    finishWindow.classList.add("invisible");
+    const restartButton = document.getElementById("restart-button");
+
+    restartButton.addEventListener('click',()=>{
+        finishWindow.classList.add("invisible")
+        resetChessboard();
+    });
+}
+function resetChessboard(){
+    createChessboard();
+    clearHistory();
+    chessHistoryRender();
+    chessboardRender();
+    chessboardGameInfoReset();
+}
+initFinishWindow();
+resetChessboard();

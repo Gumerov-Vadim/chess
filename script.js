@@ -530,6 +530,7 @@ function chessboardGameInfoReset(){
     chessboardGameInfo.squaresToCastling = [];
     chessboardGameInfo.currentTurnColor = COLORS.WHITE;
     chessboardGameInfo.pawnConversionSquare = "";
+    chessboardGameInfo.enPassantCaptureSquare = "";
     }
 chessboardGameInfoReset();
 
@@ -560,6 +561,7 @@ let gameController = {
 
         this.switchTurn();
         if(this.gameInfo.squaresToCastling?.includes(squareCoordinate)){
+
             chessboardModel[squareCoordinate].figure = chessboardModel[this.gameInfo.selectedSquare].figure;
             chessboardModel[squareCoordinate].figure.isFirstMove = false;
 
@@ -569,7 +571,7 @@ let gameController = {
             
             const key = +Object.keys(LITERAS).find(k => LITERAS[k] === litera);
 
-            if(squareCoordinate<this.selectedSquare){
+            if(squareCoordinate<this.gameInfo.selectedSquare){
                 //длинная рокировка
                 chessboardModel[LITERAS[4] + '' + number].figure = chessboardModel[LITERAS[1] + '' + number].figure;
                 chessboardModel[LITERAS[4] + '' + number].figure.isFirstMove = false;
@@ -586,6 +588,15 @@ let gameController = {
         }
 
         chessboardModel[squareCoordinate].figure = chessboardModel[this.gameInfo.selectedSquare].figure;
+
+        //Если пешка сделала два хода вперёд, то её можно взять в проходе
+        if(chessboardModel[this.gameInfo.selectedSquare].figure.name === FIGURES.PAWN &&
+            chessboardModel[this.gameInfo.selectedSquare].figure.isFirstMove &&
+            Math.abs(Number(this.gameInfo.selectedSquare.slice(-1))-Number(squareCoordinate.slice(-1)))>1){
+                this.gameInfo.enPassantCaptureSquare = squareCoordinate;       
+            } else {
+                this.gameInfo.enPassantCaptureSquare = "";       
+            }
 
         if(chessboardModel[squareCoordinate].figure.isFirstMove){chessboardModel[squareCoordinate].figure.isFirstMove = false;}
         

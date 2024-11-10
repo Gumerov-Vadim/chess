@@ -596,17 +596,10 @@ let gameController = {
         this.gameInfo.squaresToCut = squaresToCut;
         this.gameInfo.squaresToCastling = squaresToCastling;
     },
+    getAvilableMoves: function(squareCoordinate,squaresToMove,squaresToCut,squaresToCastling){
+        let squares = squaresToMove.concat(squaresToCut,squaresToCastling).filter((square)=>square!==undefined);
 
-    clickHandler: function(squareCoordinate){
-        if(!this.gameInfo.selectedSquare){
-            if(chessboardModel[squareCoordinate].figure.name === FIGURES.EMPTY){ return; }
-            if(chessboardModel[squareCoordinate].figure.color !== this.gameInfo.currentTurnColor){ return; }
-            let {squaresToMove,squaresToCut,squaresToCastling} = chessboardModel[squareCoordinate].figure.canMove(squareCoordinate);
-            
-            {
-            let squares = squaresToMove.concat(squaresToCut,squaresToCastling).filter((square)=>square!==undefined);
-
-                squares = squares.filter(square=>{
+        return squares.filter(square=>{
                     gameController.selectSquare(squareCoordinate,squaresToMove,squaresToCut,squaresToCastling);
                     this.clickHandler(square);
                     this.switchTurn();
@@ -617,7 +610,16 @@ let gameController = {
                         cancelMove();
                         return true;
                     }
-                })
+                });
+    },
+    clickHandler: function(squareCoordinate){
+        if(!this.gameInfo.selectedSquare){
+            if(chessboardModel[squareCoordinate].figure.name === FIGURES.EMPTY){ return; }
+            if(chessboardModel[squareCoordinate].figure.color !== this.gameInfo.currentTurnColor){ return; }
+            let {squaresToMove,squaresToCut,squaresToCastling} = chessboardModel[squareCoordinate].figure.canMove(squareCoordinate);
+            
+            {
+            let squares = this.getAvilableMoves(squareCoordinate,squaresToMove,squaresToCut,squaresToCastling)
 
             squaresToMove = squaresToMove?.filter((square)=>squares.includes(square));
             squaresToCut = squaresToCut?.filter((square)=>squares.includes(square));
@@ -755,7 +757,6 @@ function cancelMove(){
         chessboardGameInfo = lastMove.chessboardGameInfo;
         gameController.gameInfo = chessboardGameInfo;
         gameController.deselectSquare();
-        chessboardRender();
     }
     }
 function isUnderAttack(coordinate,figureColor){
@@ -919,18 +920,7 @@ function isThatCheckmate(){
     return friendlyFigureSquares.every(friendlyFigureSquare => {
         const figureCoordinate = LitAndNumToCoordinate(friendlyFigureSquare.litera,friendlyFigureSquare.number);
         const {squaresToMove,squaresToCut,squaresToCastling} = friendlyFigureSquare.figure.canMove(figureCoordinate);
-        const squares = squaresToMove.concat(squaresToCut,squaresToCastling).filter((square)=>square!==undefined);
-        return squares.every((square)=>{
-            gameController.clickHandler(figureCoordinate);
-            gameController.clickHandler(square);
-
-            if(!isUnderAttack(kingCoordinate)){
-                cancelMove();
-                return false;
-            };
-            cancelMove();
-            return true;
-        });
+        return !gameController.getAvilableMoves(figureCoordinate,squaresToMove,squaresToCut,squaresToCastling).length;
     });
 }
 function isThatCheck(){
@@ -985,8 +975,19 @@ function chessboardRender(){
     } else {
         gameController.pawnConversion(gameController.gameInfo.pawnConversionSquare);
     }
-
     chessHistoryRender()
+    if((!chessboardGameInfo.selectedSquare.length||!chessboardGameInfo.squaresToCut.length||!chessboardGameInfo.squaresToMove.length)&&isThatCheckmate()){
+        const finishWindow = document.createElement("div");
+        finishWindow.id = finishWindow;
+        finishWindow.style.zIndex = 99999;
+        finishWindow.style.width = "100vw";
+        finishWindow.style.height = "100vh";
+        finishWindow.style.position = "fixed";
+        finishWindow.style.left = 0;
+        finishWindow.style.top = 0;
+        finishWindow.style.backgroundColor = "rgba(0,0,0,0.6)";
+        document.body.appendChild(finishWindow); 
+    }
 }
 function createChessboard(){
     for(let i = 1; i <= 8; i++){

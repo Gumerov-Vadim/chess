@@ -516,6 +516,14 @@ let chessboardModel= {
 
 let chessboardGameInfo = {};
 function chessboardGameInfoReset(){
+    if(arguments.length){
+        const gameInfoCopy = arguments[0];
+        Object.entries(gameInfoCopy).forEach(el=>{
+            chessboardGameInfo[el[0]] = el[1];
+        });
+    return;    
+    }
+
     chessboardGameInfo.selectedSquare = "";
     chessboardGameInfo.squaresToMove = [];
     chessboardGameInfo.squaresToCut = [];
@@ -573,7 +581,6 @@ let gameController = {
                 chessboardModel[LITERAS[8] + '' + number].figure = new Empty();
             }
 
-            chessboardRender();
             this.deselectSquare();
             return true;
         }
@@ -588,7 +595,6 @@ let gameController = {
         }
 
         chessboardModel[this.gameInfo.selectedSquare].figure = new Empty();
-        chessboardRender();
         this.deselectSquare();
         return true;
     },
@@ -644,6 +650,13 @@ let gameController = {
     clickHandlerWithRender: function(squareCoordinate){
         this.clickHandler(squareCoordinate);
         chessboardRender();
+        const gameInfoCopy = JSON.parse(JSON.stringify(chessboardGameInfo));
+        if(isThatCheckmate()){
+            gameController.switchTurn();
+            checkmateHandler(chessboardGameInfo.currentTurnColor);
+        } else {
+            chessboardGameInfoReset(gameInfoCopy);
+        }
     },
     pawnConversion: function(squareCoordinate){
         const keycolor = this.gameInfo.currentTurnColor !== COLORS.WHITE? "WHITE": "BLACK"; 
@@ -699,6 +712,7 @@ let gameController = {
     }
     
 }
+
 let gameHistory = [];
 function getChessboardModelPrototype(){
     const chessboardModelPrototype = {};
@@ -979,10 +993,7 @@ function chessboardRender(){
         gameController.pawnConversion(gameController.gameInfo.pawnConversionSquare);
     }
     chessHistoryRender()
-    if((!chessboardGameInfo.selectedSquare.length||!chessboardGameInfo.squaresToCut.length||!chessboardGameInfo.squaresToMove.length)&&isThatCheckmate()){
-        gameController.switchTurn();
-        checkmateHandler(chessboardGameInfo.currentTurnColor);
-    }
+    
 }
 
 function checkmateHandler(winner){
